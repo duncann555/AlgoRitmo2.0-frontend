@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Row, Col, Button, Card, Form } from "react-bootstrap";
 
 import canciones from "../../Data/CancionesInicio.js";
-import "../../styles/Home.css";
+import "../../styles/app.css";
 import Playlist from "../pages/PlayLists.jsx";
 
 const ITEMS_POR_VISTA = 6;

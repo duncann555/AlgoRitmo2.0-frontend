@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import "../../styles/admin.css";
-import "../../styles/sweetalert.css";
+import "../../styles/app.css";
 
 function Administrador() {
   const navigate = useNavigate();

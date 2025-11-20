@@ -6,7 +6,7 @@ import MaximilianoGuerrero from "../../img/MaximilianoGuerrero.jpg";
 import SebastianFlomenbaun from "../../img/SebastianFlomenbaun.jpg";
 import IgnacioLedesma from "../../img/IgnacioLedesma.jpg";
 import { Link } from "react-router-dom";
-import "../../styles/nosotros.css";
+import "../../styles/app.css";
 
 const Nosotros = () => {
   return (

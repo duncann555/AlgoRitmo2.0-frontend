@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import '../../styles/notFound.css'; 
+import '../../styles/app.css'; 
 
 const NotFoundPage = () => {
   return (

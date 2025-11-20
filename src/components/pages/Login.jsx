@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { Google, Facebook } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import "../../styles/Login.css";
-import "../../styles/sweetalert.css"
+import "../../styles/app.css";
 import { data, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 

@@ -6,8 +6,7 @@ import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import img from "../../img/1.png";
 
-import "../../styles/admin.css";
-import "../../styles/sweetalert.css";
+import "../../styles/app.css";
 
 const FormularioAdmin = () => {
   const {
