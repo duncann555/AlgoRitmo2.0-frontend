@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Menu from "./components/shared/Menu";
 import Footer from "./components/shared/Footer";
 import Detalle from "./components/pages/Detalle";
-import CardCanciones from "./components/pages/CardCanciones";
+import CardCanciones from "./components/pages/Home";
 import Administrador from "./components/pages/Administrador";
 import Nosotros from "./components/pages/Nosotros";
 import Login from "./components/pages/Login";
@@ -11,6 +11,8 @@ import NotFoundPage from "./components/shared/NotFoundPage";
 import FormularioAdmin from "./components/pages/FormularioAdmin";
 import { useEffect, useState } from "react";
 import ProtectorAdmin from "./components/routes/ProtectorAdmin";
+import MiPlaylist from "./components/pages/MiPlaylist";
+
 
 export default function AppLayout() {
   const sesionUsuario =
@@ -49,6 +51,8 @@ export default function AppLayout() {
                 <Route index element={<Administrador />} />
                 <Route path="formulario" element={<FormularioAdmin />} />
               </Route>
+              <Route path="/playlist" element={<MiPlaylist />} />
+
 
               <Route path="/about" element={<Nosotros />} />
               <Route path="*" element={<NotFoundPage />} />

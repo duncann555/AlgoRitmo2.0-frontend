@@ -1,0 +1,341 @@
+/* ================================
+   1) IMAGEN DE LA CARD
+================================ */
+.cardImg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/* ================================
+   2) SIDEBAR
+================================ */
+.spotify-sidebar {
+  background: linear-gradient(135deg, #202020, #000000);
+  color: #fff;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  
+}
+
+
+.logo-sidebar {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #e8458b;
+}
+
+.sidebar-section {
+  margin-top: 1.5rem;
+}
+
+.sidebar-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.sidebar-search input {
+  background: #1b1b1b;
+  border: none;
+  color: #fff;
+}
+
+.sidebar-search input::placeholder {
+  color: #aaa;
+}
+
+/* que no tape el navbar */
+.sidebar-sticky {
+  position: sticky;
+  top: 80px;
+}
+
+/* ================================
+   3) BANNER SUPERIOR
+================================ */
+.banner-spotify {
+  min-height: 230px;
+  padding: 2rem;
+  border-radius: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #202020, #000000);
+  
+}
+
+.titulo-banner {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.descripcion-banner {
+  font-size: 1.05rem;
+  opacity: 0.85;
+}
+
+.categoria-banner {
+  font-weight: 600;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.playlist-subtitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* ================================
+   4) BOTONES CARRUSEL PLAYLIST
+================================ */
+.btn-playlist-nav-circle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  z-index: 2;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+  transition: 0.2s ease;
+}
+
+.btn-playlist-nav-circle i {
+  font-size: 1.5rem;
+}
+
+.btn-playlist-nav-circle:hover {
+  background: rgba(232, 69, 139, 0.85) !important;
+  border-color: #e8458b !important;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* izquierda / derecha del banner */
+.btn-playlist-left {
+  left: 12px;
+}
+
+.btn-playlist-right {
+  right: 12px;
+}
+
+/* ================================
+   5) MINI CARDS DE PLAYLIST (BANNER)
+================================ */
+.playlist-banner-container {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  overflow: hidden;
+}
+
+.playlist-mini-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  min-width: 160px;
+  max-width: 160px;
+  padding: 8px;
+  padding-bottom: 40px; /* espacio para el botón X */
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  transition: 0.25s ease;
+  position: relative; /* clave para el botón absoluto */
+}
+
+.playlist-mini-card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #e8458b;
+}
+
+.playlist-mini-card:active {
+  transform: scale(0.95);
+}
+
+.playlist-mini-img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.playlist-mini-title {
+  margin: 6px 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.playlist-mini-artist {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: #ddd;
+}
+
+/* ================================
+   6) CARD DE CANCIONES (GRID)
+================================ */
+.cardSpotify {
+  background: #181818;
+  color: #fff;
+  transition: 0.2s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+  
+}
+
+.cardSpotify:hover {
+  background: #202020;
+  transform: scale(1.03);
+    border-color: #e8458b;
+
+}
+
+.card-img-wrapper {
+  position: relative;
+}
+
+.play-btn-overlay {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.cardSpotify:hover .play-btn-overlay {
+  opacity: 1;
+}
+
+.play-btn {
+  font-size: 3rem;
+  color: #e8458b;
+}
+
+/* ================================
+   7) BOTÓN GRADIENTE GENERAL
+================================ */
+.btn-gradient {
+  border: none !important;
+  background: linear-gradient(135deg, #a3194d, #6d1c9a, #2c3ea8) !important;
+  color: #fff !important;
+  font-weight: 700;
+  padding: 0.55rem 1.3rem;
+  border-radius: 14px !important;
+  display: inline-block;
+  transition: 0.25s ease;
+  background-size: 300% 300%;
+  box-shadow: 0 0 20px rgba(162, 128, 255, 0.45),
+    0 0 25px rgba(44, 62, 168, 0.45) !important;
+  text-decoration: none;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(
+    135deg,
+    #b86f00,
+    #c93b00,
+    #a3194d,
+    #6d1c9a,
+    #2c3ea8
+  ) !important;
+  background-position: 100% 0%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6) !important;
+}
+
+.btn-gradient:focus {
+  outline: none !important;
+  box-shadow: 0 0 10px rgba(162, 128, 255, 0.5), 0 0 20px rgba(44, 62, 168, 0.5) !important;
+}
+
+/* ================================
+   8) BOTÓN “AGREGAR A PLAYLIST”
+================================ */
+.btn-agregar-playlist {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.35rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.btn-agregar-playlist:hover {
+  background: #e8458b;
+  border-color: #e8458b;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(232, 69, 139, 0.5);
+}
+
+.btn-agregar-playlist.agregada {
+  background: #4caf50 !important;
+  border-color: #4caf50 !important;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+/* ================================
+   9) BOTÓN “QUITAR” (X)
+================================ */
+.btn-remove-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px !important;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #fff !important;
+  transition: 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.btn-remove-pill i {
+  font-size: 0.8rem;
+}
+
+.btn-remove-pill:hover {
+  background: rgba(232, 69, 139, 0.95) !important;
+  border-color: #e8458b !important;
+  box-shadow: 0 0 10px rgba(232, 69, 139, 0.7);
+  transform: scale(1.05);
+}
+
+/* contexto sidebar */
+.playlist-remove-btn {
+  flex-shrink: 0;
+}
+
+/* contexto banner */
+.btn-remove-playlist {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+/* ================================
+   10) MEDIA QUERIES
+================================ */
+@media (max-width: 576px) {
+  .btn-playlist-nav-circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .btn-playlist-nav-circle i {
+    font-size: 1.2rem;
+  }
+}

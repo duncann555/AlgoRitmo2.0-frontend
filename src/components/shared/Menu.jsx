@@ -15,7 +15,7 @@ const logout = () => {
       <Container>
         <Navbar.Brand href="/" className="navbar-brand-custom fuenteLogo">
           <img src="/logo.png" alt="AlgoRitmo Icon" className="navbar-logo" />
-          AlgoRitmo
+          AlgoRitmo 2.0
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
