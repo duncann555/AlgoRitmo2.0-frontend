@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Row, Col, Button, Card, Form } from "react-bootstrap";
-
 import canciones from "../../Data/CancionesInicio.js";
-import "../../styles/app.css";
+import "../../styles/home.css";
 import Playlist from "../pages/PlayLists.jsx";
+import { FaMusic } from "react-icons/fa";
+import { FaPlus, FaCheck } from "react-icons/fa";
 
 const ITEMS_POR_VISTA = 6;
 
@@ -81,32 +82,35 @@ const Home = () => {
   };
 
   // === FILTRO DE BÚSQUEDA ===
-const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
-  const textoBusqueda = busqueda.toLowerCase();
+  const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
+    const textoBusqueda = busqueda.toLowerCase();
 
-  const titulo = (cancion.nombreCancion || cancion.titulo || "").toLowerCase();
-  const artista = (cancion.artista || "").toLowerCase();
-  const categoria = (cancion.categoria || "").toLowerCase();
+    const titulo = (
+      cancion.nombreCancion ||
+      cancion.titulo ||
+      ""
+    ).toLowerCase();
+    const artista = (cancion.artista || "").toLowerCase();
+    const categoria = (cancion.categoria || "").toLowerCase();
 
-  return (
-    titulo.includes(textoBusqueda) ||
-    artista.includes(textoBusqueda) ||
-    categoria.includes(textoBusqueda)
-  );
-});
-
+    return (
+      titulo.includes(textoBusqueda) ||
+      artista.includes(textoBusqueda) ||
+      categoria.includes(textoBusqueda)
+    );
+  });
 
   return (
     <Row className="g-4 mt-3">
       {/* === SIDEBAR === */}
       <Col xs={12} lg={4} xl={3} className="mb-4 mb-lg-0">
         <aside className="spotify-sidebar text-white sidebar-sticky">
-          <h3 className="logo-sidebar mb-4 text-center">AlgoRitmo</h3>
+          <h3 className="logo-sidebar mb-4 text-center">
+            AlgoRitmo <FaMusic style={{ color: "#e8458b" }} />
+          </h3>
 
           <div className="sidebar-section">
-            <p className="sidebar-title text-uppercase mb-2">
-              Tu biblioteca
-            </p>
+            <p className="sidebar-title text-uppercase mb-2">Tu biblioteca</p>
 
             <div className="sidebar-search mb-3">
               <Form.Control
@@ -133,13 +137,10 @@ const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
       {/* === CONTENIDO PRINCIPAL === */}
       <Col xs={12} lg={8} xl={9}>
         {/* === BANNER === */}
-        <section className="banner-spotify mb-4 mb-lg-5 position-relative">
+        <section className="banner-playlist mb-4 mb-lg-5 position-relative">
           <div className="banner-info">
             <p className="categoria-banner mb-1">Playlist</p>
             <h1 className="titulo-banner mb-2">Tu música favorita</h1>
-            <p className="descripcion-banner mb-0">
-              Descubrí artistas nuevos y recordá los clásicos.
-            </p>
           </div>
 
           <Button className="btn-gradient btn-lg position-absolute bottom-0 end-0 me-3 mb-3">
@@ -166,11 +167,9 @@ const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
               </Button>
 
               <div className="mt-4">
-                <h3 className="playlist-subtitle mb-2">
-                  Tu playlist favorita
-                </h3>
+                <h3 className="playlist-subtitle mb-2">Tu playlist favorita</h3>
 
-                <div className="playlist-banner-container mt-2">
+                <div className="playlist-banner-container mt-2 pb-5">
                   {playlistVisible().map((cancion) => {
                     const nombre =
                       cancion.nombreCancion || cancion.titulo || "Sin título";
@@ -254,16 +253,30 @@ const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
                     </Card.Text>
 
                     <Button
-                      className={`btn-agregar-playlist mt-2 ${
+                      className={`mt-2 ${
                         playlist.some((p) => p.id === cancion.id)
-                          ? "agregada"
-                          : ""
+                          ? "btn-agregar-playlist"
+                          : "btn-gradient"
                       }`}
                       onClick={() => agregarAPlaylist(cancion)}
                     >
-                      {playlist.some((p) => p.id === cancion.id)
-                        ? "✓ Agregada"
-                        : "➕ Agregar"}
+                      {playlist.some((p) => p.id === cancion.id) ? (
+                        <>
+                          <FaCheck
+                            style={{ color: "#e8458b" }}
+                            className="me-2"
+                          />
+                          Agregada
+                        </>
+                      ) : (
+                        <>
+                          <FaPlus
+                            style={{ color: "#ffffffff"}}
+                            className="me-2 fs-5"
+                          />
+                          Agregar
+                        </>
+                      )}
                     </Button>
                   </Card.Body>
                 </Card>

@@ -1,0 +1,287 @@
+/* ================================
+   HOME / LAYOUT
+================================ */
+
+/* Imagen de card general */
+.cardImg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/* Sidebar */
+.spotify-sidebar {
+  background: linear-gradient(135deg, #502a2a, #000000);
+  color: #fff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  
+}
+
+.logo-sidebar {
+  font-size: 29px;
+  font-weight: 800;
+  color: #e8458b;
+}
+
+.sidebar-section {
+  margin-top: 24px;
+}
+
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.sidebar-search input {
+  background: #1b1b1b;
+  border: none;
+  color: #fff;
+}
+
+.sidebar-search input::placeholder {
+  color: #aaa;
+}
+
+/* que no tape el navbar */
+.sidebar-sticky {
+  position: sticky;
+  top: 80px;
+}
+
+/* Banner PlayList*/
+
+
+.banner-playlist {
+  min-height: 230px;
+  padding: 32px;
+  border-radius: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #502a2a, #000000);
+}
+
+.titulo-banner {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.descripcion-banner {
+  font-size: 17px;
+  opacity: 0.85;
+}
+
+.categoria-banner {
+  font-weight: 600;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.playlist-subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Botones carrusel playlist */
+.btn-playlist-nav-circle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  z-index: 2;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+  transition: 0.2s ease;
+}
+
+.btn-playlist-nav-circle i {
+  font-size: 24px;
+}
+
+.btn-playlist-nav-circle:hover {
+  background: rgba(232, 69, 139, 0.85) !important;
+  border-color: #e8458b !important;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.btn-playlist-left {
+  left: 12px;
+}
+
+.btn-playlist-right {
+  right: 12px;
+}
+
+/* Playlist mini-cards (banner) */
+.playlist-banner-container {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  overflow: hidden;
+  
+}
+
+.playlist-mini-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  min-width: 160px;
+  max-width: 160px;
+  padding: 8px;
+  padding-bottom: 40px; 
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  transition: 0.25s ease;
+  position: relative;
+}
+
+.playlist-mini-card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #e8458b;
+}
+
+.playlist-mini-card:active {
+  transform: scale(0.95);
+}
+
+.playlist-mini-img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.playlist-mini-title {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.playlist-mini-artist {
+  font-size: 12px;
+  opacity: 0.8;
+  color: #ddd;
+}
+
+/* Card de canciones (grid) */
+.cardSpotify {
+  background: linear-gradient(135deg, #502a2a, #000000);
+  color: #fff;
+  transition: 0.2s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cardSpotify:hover {
+  background: #202020;
+  transform: scale(1.03);
+  border-color: #e8458b;
+}
+
+.card-img-wrapper {
+  position: relative;
+}
+
+.play-btn-overlay {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.cardSpotify:hover .play-btn-overlay {
+  opacity: 1;
+}
+
+.play-btn {
+  font-size: 48px;
+  color: #e8458b;
+}
+
+/* Botón “Agregar a playlist” */
+.btn-agregar-playlist {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8458b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.btn-agregar-playlist:hover {
+  background: #e8458b;
+  border-color: #e8458b;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(232, 69, 139, 0.5);
+}
+
+.btn-agregar-playlist.agregada {
+  background: #4caf50 !important;
+  border-color: #4caf50 !important;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+/* Botón X quitar playlist (global) */
+.btn-remove-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px !important;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #fff !important;
+  transition: 0.2s ease;
+  font-size: 13px;
+}
+
+.btn-remove-pill i {
+  font-size: 13px;
+}
+
+.btn-remove-pill:hover {
+  background: rgba(232, 69, 139, 0.95) !important;
+  border-color: #e8458b !important;
+  box-shadow: 0 0 10px rgba(232, 69, 139, 0.7);
+  transform: scale(1.05);
+}
+
+/* contexto sidebar */
+.playlist-remove-btn {
+  flex-shrink: 0;
+}
+
+/* contexto banner */
+.btn-remove-playlist {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+/* Media queries home */
+@media (max-width: 576px) {
+  .btn-playlist-nav-circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .btn-playlist-nav-circle i {
+    font-size: 19px;
+  }
+}

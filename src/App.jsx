@@ -7,7 +7,7 @@ import CardCanciones from "./components/pages/Home";
 import Administrador from "./components/pages/Administrador";
 import Nosotros from "./components/pages/Nosotros";
 import Login from "./components/pages/Login";
-import NotFoundPage from "./components/shared/NotFoundPage";
+import Error404 from "./components/shared/Error404";
 import FormularioAdmin from "./components/pages/FormularioAdmin";
 import { useEffect, useState } from "react";
 import ProtectorAdmin from "./components/routes/ProtectorAdmin";
@@ -30,7 +30,7 @@ export default function AppLayout() {
           usuarioLogueado={usuarioLogueado}
           setUsuarioLogueado={setUsuarioLogueado}
         />
-        <main>
+        <main className="mb-4">
           <Container>
             <Routes>
               <Route path="/" element={<CardCanciones />} />
@@ -55,7 +55,7 @@ export default function AppLayout() {
 
 
               <Route path="/about" element={<Nosotros />} />
-              <Route path="*" element={<NotFoundPage />} />
+              <Route path="*" element={<Error404 />} />
             </Routes>
           </Container>
         </main>

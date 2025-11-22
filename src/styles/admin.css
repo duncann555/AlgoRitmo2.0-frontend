@@ -1,0 +1,164 @@
+/* ================================
+   ADMIN
+================================ */
+.admin-panel {
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.admin-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #f5f6fa;
+  letter-spacing: 1px;
+}
+
+.admin-control-buscar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  transition: 0.2s ease;
+}
+
+.admin-control-buscar::placeholder {
+  color: #bbb;
+}
+
+.admin-control-buscar:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #e8458b;
+  box-shadow: 0 0 0 2px rgba(232, 69, 139, 0.3);
+  color: #fff;
+}
+
+/* Tabla admin */
+.admin-table {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.admin-table th,
+.admin-table td {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.admin-table thead {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.admin-table tbody tr {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transition: 0.2s ease;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* Botones de acción */
+.admin-button-edit,
+.admin-button-trash {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: #fff;
+  transition: 0.2s ease;
+}
+
+.admin-button-edit {
+  background: rgba(100, 200, 255, 0.2);
+}
+
+.admin-button-edit:hover {
+  background: rgba(100, 200, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.admin-button-trash {
+  background: rgba(255, 70, 70, 0.2);
+}
+
+.admin-button-trash:hover {
+  background: rgba(255, 70, 70, 0.4);
+  transform: scale(1.1);
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 32px;
+  font-size: 19px;
+  opacity: 0.8;
+}
+
+/* Modal / ventana flotante admin */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-window {
+  background: rgba(20, 20, 30, 0.9);
+  border-radius: 18px;
+  padding: 40px;
+  width: 95%;
+  max-width: 550px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  position: relative;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.form-flotante {
+  width: 100%;
+  color: #fff;
+}
+
+/* Botón cerrar modal */
+.btn-close-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 21px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  transform: scale(1.2);
+  color: #ff4f9a !important;
+}

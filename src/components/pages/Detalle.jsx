@@ -1,5 +1,5 @@
 import { Card, Row, Col, Button } from "react-bootstrap";
-import "../../styles/app.css";
+import "../../styles/detalle.css";
 import { useEffect, useState } from "react";
 import canciones from "../../Data/CancionesInicio";
 import { useParams, useNavigate } from "react-router-dom";

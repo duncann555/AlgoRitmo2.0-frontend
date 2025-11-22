@@ -1,0 +1,129 @@
+/* ================================
+   FOOTER
+================================ */
+.footer-custom {
+  background: linear-gradient(135deg, var(--color-surface), #331d54);
+  color: var(--color-text);
+  padding: 24px 0 16px;
+  margin-top: auto;
+  font-size: 18px;
+}
+
+/* Marca */
+.footer-brand {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 25px !important;
+}
+
+.footer-logo {
+  width: 32px;
+  height: 32px;
+  margin-left: 6px;
+}
+
+/* Texto descriptivo */
+.footer-description {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+/* Enlaces */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 6px;
+}
+
+.footer-link {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.footer-link:hover {
+  color: var(--color-primary);
+}
+
+/* Títulos de sección */
+.footer-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+/* Contacto */
+.footer-contact {
+  margin: 0 0 8px;
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+/* Redes */
+.footer-socials {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.footer-socials a {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  font-size: 18px;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.footer-socials a:hover {
+  background: linear-gradient(135deg, #a3194d, #6d1c9a, #2c3ea8);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+/* Divider + copy */
+.footer-divider {
+  border-color: rgba(148, 163, 184, 0.4);
+  margin: 16px 0 10px;
+}
+
+.footer-copy {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-custom {
+    text-align: center;
+  }
+
+  .footer-brand {
+    justify-content: center;
+  }
+
+  .footer-socials {
+    justify-content: center;
+  }
+
+  .footer-cols-spacing {
+    row-gap: 16px;
+  }
+}

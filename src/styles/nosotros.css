@@ -1,0 +1,70 @@
+/* ================================
+   NOSOTROS
+================================ */
+.cardNosotros {
+  border-color: var(--color-secondary);
+  color: var(--color-accent);
+  text-align: center;
+  box-shadow: 1px 1px 2px var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.imgCardNosotros {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: var(--color-accent);
+}
+
+.cardNosotros:hover {
+  transform: scale(1.15);
+  box-shadow: 3px 3px 20px var(--color-primary);
+  overflow: hidden;
+}
+
+.nameCardNosotros {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: 60%;
+}
+
+.AlgoRitmo {
+  color: var(--color-primary);
+}
+
+.AlgoRitmo:hover {
+  color: var(--color-success);
+}
+
+.iconoCard {
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.iconoCard:hover {
+  font-size: larger;
+  color: var(--color-success);
+  transition: 600ms;
+  transform: scale(1.3);
+}
+
+.h2Nosotros {
+  color: var(--color-secondary);
+}
+
+@media (min-width: 768px) {
+  .cardNosotros:hover {
+    transform: scale(1.005);
+    transition: transform 0.3s ease;
+  }
+}

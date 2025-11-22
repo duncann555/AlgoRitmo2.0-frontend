@@ -1,6 +1,6 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
-import "../../styles/app.css";
+import "../../styles/menu.css";
 
 const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
   const navegacion = useNavigate();
@@ -49,7 +49,7 @@ const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
               <Button
                 type="button"
                 variant="outline-light"
-                className="btn-cuenta ms-lg-3 mt-3 mt-lg-0"
+                className="btn-gradient ms-lg-3 mt-3 mt-lg-0"
                 onClick={() => navegacion("/login")}
               >
                 Ingresar

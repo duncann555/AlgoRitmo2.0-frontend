@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import "../../styles/app.css";
+import "../../styles/admin.css";
 
 function Administrador() {
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ function Administrador() {
             />
 
             <Button
-              className="btn-agregarCancion"
+              className="btn-gradient"
               onClick={() => navigate("/admin/formulario")}
             >
               <i className="bi bi-music-note-beamed me-2"></i> Agregar

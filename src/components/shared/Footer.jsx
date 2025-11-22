@@ -1,28 +1,30 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { Github, Instagram, Linkedin } from "react-bootstrap-icons";
-import "../../styles/app.css";
+import "../../styles/footer.css";
 
 const Footer = () => {
   return (
     <footer className="footer-custom">
       <Container>
-        <Row>
-          {/* Sección 1: Marca */}
-          <Col md={4}>
+        <Row className="footer-cols-spacing">
+          {/* Marca */}
+          <Col md={4} className="mb-3 mb-md-0">
             <h5 className="footer-brand fuenteLogo">
-              AlgoRitmo
+              AlgoRitmo 2.0
               <img
                 src="/logo.png"
                 alt="AlgoRitmo Icon"
                 className="footer-logo"
               />
             </h5>
-            <p>Tu música, en cualquier momento.</p>
+            <p className="footer-description">
+              Tu música, en cualquier momento, con estilo AlgoRitmo.
+            </p>
           </Col>
 
-          {/* Sección 2: Navegación */}
-          <Col md={4}>
-            <h6>Enlaces</h6>
+          {/* Navegación */}
+          <Col md={4} className="mb-3 mb-md-0">
+            <h6 className="footer-title">Enlaces</h6>
             <ul className="footer-links">
               <li>
                 <a href="/" className="footer-link">
@@ -42,16 +44,17 @@ const Footer = () => {
             </ul>
           </Col>
 
-          {/* Sección 3: Contacto + Redes */}
+          {/* Contacto + Redes */}
           <Col md={4}>
-            <h6>Contacto</h6>
-            <p>Email: contacto@algoritmo.com</p>
+            <h6 className="footer-title">Contacto</h6>
+            <p className="footer-contact">Email: sebaflomen@gmail.com</p>
 
             <div className="footer-socials">
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub"
               >
                 <Github />
               </a>
@@ -59,6 +62,7 @@ const Footer = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
               >
                 <Instagram />
               </a>
@@ -66,6 +70,7 @@ const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn"
               >
                 <Linkedin />
               </a>
@@ -76,7 +81,7 @@ const Footer = () => {
         <hr className="footer-divider" />
 
         <p className="text-center footer-copy">
-          &copy; 2025 <span className="fuenteLogo">AlgoRitmo</span> App - Todos
+          &copy; 2025 <span className="footer-copy">AlgoRitmo 2.0 </span> App – Todos
           los derechos reservados
         </p>
       </Container>
