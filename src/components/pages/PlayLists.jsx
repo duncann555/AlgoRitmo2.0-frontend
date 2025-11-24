@@ -11,31 +11,39 @@ const Playlist = ({ playlist = [], onRemove }) => {
         <p className="text-muted">No agregaste canciones aún.</p>
       ) : (
         <ul className="playlist-list">
-          {playlist.map((song) => (
-            <li
-              key={song.id}
-              className="playlist-item d-flex align-items-center justify-content-between gap-2"
-            >
-              <Link
-                to={`/detalles/${song.id}`}
-                className="playlist-link flex-grow-1 text-truncate"
-                title={`${song.nombre} - ${song.artista}`}
-              >
-                🎵 {song.nombre} - {song.artista}
-              </Link>
+          {playlist.map((song) => {
+            // ⚠️ FIX IMPORTANTE:
+            // Definimos el ID acá para no repetir lógica.
+            // MongoDB usa '_id', pero por si acaso miramos 'id' también.
+            const songId = song._id || song.id;
 
-              {onRemove && (
-                <Button
-                  variant="outline-light"
-                  size="sm"
-                  className="btn-remove-pill playlist-remove-btn"
-                  onClick={() => onRemove(song.id)}
+            return (
+              <li
+                key={songId}
+                className="playlist-item d-flex align-items-center justify-content-between gap-2"
+              >
+                <Link
+                  to={`/detalles/${songId}`}
+                  className="playlist-link flex-grow-1 text-truncate"
+                  title={`${song.nombre} - ${song.artista}`}
                 >
-                  <i className="bi bi-x-lg"></i>
-                </Button>
-              )}
-            </li>
-          ))}
+                  🎵 {song.nombre} - {song.artista}
+                </Link>
+
+                {onRemove && (
+                  <Button
+                    variant="outline-light"
+                    size="sm"
+                    className="btn-remove-pill playlist-remove-btn"
+                    // Usamos la variable songId que calculamos arriba
+                    onClick={() => onRemove(songId)}
+                  >
+                    <i className="bi bi-x-lg"></i>
+                  </Button>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

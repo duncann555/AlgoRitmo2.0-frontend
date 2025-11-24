@@ -5,7 +5,8 @@ import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import img from "../../img/1.png";
 import "../../styles/app.css";
-import { crearCancionApi, editarCancionApi } from "../../../services/canciones.service";
+// 👇 CAMBIO 1: Importamos las funciones nuevas (fijate las mayúsculas en API)
+import { crearCancionAPI, editarCancionAPI } from "../../helpers/queries";
 
 const FormularioAdmin = () => {
   const {
@@ -19,6 +20,7 @@ const FormularioAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Verificamos si hay estado para saber si estamos editando
   const editar = location.state?.cancion !== undefined;
 
   useEffect(() => {
@@ -50,25 +52,44 @@ const FormularioAdmin = () => {
     };
 
     try {
+      let respuesta;
+
       if (editar) {
-        await editarCancionApi(location.state.cancion.id, songFront);
+        // 👇 CAMBIO 2: Blindaje del ID (_id vs id)
+        const cancion = location.state.cancion;
+        const idCancion = cancion._id || cancion.id;
+        
+        respuesta = await editarCancionAPI(idCancion, songFront);
       } else {
-        await crearCancionApi(songFront);
-        reset();
+        respuesta = await crearCancionAPI(songFront);
       }
 
-      Swal.fire({
-        title: editar ? "Cambios guardados" : "Canción creada",
-        icon: "success",
-        confirmButtonText: "OK",
-        customClass: {
-          popup: "swal-popup-custom",
-          confirmButton: "btn-swal-confirm",
-        },
-      }).then(() => navigate("/admin"));
+      // 👇 CAMBIO 3: Validación de respuesta HTTP
+      // Como queries.js devuelve el objeto Response, chequeamos .status o .ok
+      if (respuesta && respuesta.status >= 200 && respuesta.status < 300) {
+        
+        Swal.fire({
+          title: editar ? "Cambios guardados" : "Canción creada",
+          text: `La canción "${songFront.nombre}" fue procesada con éxito`,
+          icon: "success",
+          confirmButtonText: "OK",
+          customClass: {
+            popup: "swal-popup-custom",
+            confirmButton: "btn-swal-confirm",
+          },
+        }).then(() => {
+          if (!editar) reset(); // Limpiamos solo si creamos
+          navigate("/admin");
+        });
+
+      } else {
+        // Si el backend tiró un error (ej: 400, 500)
+        throw new Error("No se pudo procesar la solicitud en el servidor.");
+      }
 
     } catch (e) {
-      Swal.fire("Error", e.message, "error");
+      console.error(e);
+      Swal.fire("Error", "Ocurrió un problema, intente más tarde.", "error");
     }
   };
 

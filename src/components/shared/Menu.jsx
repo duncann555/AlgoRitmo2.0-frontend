@@ -1,19 +1,21 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import "../../styles/menu.css";
 
 const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
   const navegacion = useNavigate();
 
   const logout = () => {
-    setUsuarioLogueado(false);
-    navegacion("/login");
+    // Borramos todo rastro
+    localStorage.removeItem("token");
+    setUsuarioLogueado(null); // Usá null, no false, por coherencia
+    navegacion("/");
   };
 
   return (
     <Navbar expand="lg" className="navbar-custom py-2 fs-5" variant="dark" sticky="top">
       <Container>
-        <Navbar.Brand href="/" className="navbar-brand-custom fuenteLogo">
+        <Navbar.Brand as={Link} to="/" className="navbar-brand-custom fuenteLogo">
           <img src="/logo.png" alt="AlgoRitmo Icon" className="navbar-logo" />
           AlgoRitmo 2.0
         </Navbar.Brand>
@@ -22,22 +24,28 @@ const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
 
         <Navbar.Collapse id="main-navbar">
           <Nav className="ms-auto align-items-lg-center gap-2 gap-lg-3">
-            <NavLink to="/" className="nav-link nav-link-custom">
+            <NavLink end to="/" className="nav-link nav-link-custom">
               Inicio
             </NavLink>
 
-            <NavLink to="/about" className="nav-link nav-link-custom">
+            <NavLink end to="/about" className="nav-link nav-link-custom">
               Nosotros
             </NavLink>
 
             {usuarioLogueado ? (
               <>
-                <NavLink to="/admin" className="nav-link nav-link-custom">
-                  Administrador
+                {/* CORRECCIÓN 2: Solo mostramos Admin si tiene el rol correcto */}
+                {usuarioLogueado.rol === 'admin' && (
+                  <NavLink end to="/admin" className="nav-link nav-link-custom">
+                    Administrador
+                  </NavLink>
+                )}
+                
+                <NavLink end to="/playlist" className="nav-link nav-link-custom">
+                   Mi Música
                 </NavLink>
 
                 <Button
-                  type="button"
                   variant="outline-light"
                   className="btn-cuenta ms-lg-3 mt-3 mt-lg-0"
                   onClick={logout}
@@ -47,7 +55,6 @@ const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
               </>
             ) : (
               <Button
-                type="button"
                 variant="outline-light"
                 className="btn-gradient ms-lg-3 mt-3 mt-lg-0"
                 onClick={() => navegacion("/login")}

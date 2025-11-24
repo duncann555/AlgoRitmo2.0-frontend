@@ -2,22 +2,42 @@ import { Card, Row, Col, Button } from "react-bootstrap";
 import "../../styles/detalle.css";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getCanciones } from "../../../services/canciones.service";
+// 👇 CAMBIO 1: Importamos la búsqueda por ID específica
+import { obtenerCancionPorId } from "../../helpers/queries";
 
 const Detalle = () => {
   const { id } = useParams();
   const [cancion, setCancion] = useState(null);
+  // Agregué un estado de "Cargando" para que no parpadee el "No encontrada" al inicio
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const cargar = async () => {
-      const todas = await getCanciones();
-      const encontrada = todas.find((c) => c.id === id);
-      setCancion(encontrada);
-    };
-    cargar();
+    cargarDatos();
   }, [id]);
 
-  if (!cancion) return <h2 className="text-center mt-5">Canción no encontrada</h2>;
+  const cargarDatos = async () => {
+    try {
+      setCargando(true);
+      // 👇 CAMBIO 2: Llamada directa por ID al backend
+      const respuesta = await obtenerCancionPorId(id);
+      
+      // Si el backend no encuentra nada, suele devolver null o 404
+      setCancion(respuesta);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Renderizados condicionales (UX Básica)
+  if (cargando) {
+    return <h2 className="text-center mt-5 text-light">Cargando detalle...</h2>;
+  }
+
+  if (!cancion) {
+    return <h2 className="text-center mt-5 text-light">Canción no encontrada 😢</h2>;
+  }
 
   return (
     <>
@@ -45,9 +65,15 @@ const Detalle = () => {
 
               <hr />
 
-              <p className="fs-4"><strong>Duración:</strong> {cancion.duracion}</p>
-              <p className="fs-4"><strong>Género:</strong> {cancion.categoria}</p>
-              <p className="fs-4"><strong>Año:</strong> {cancion.anio}</p>
+              <p className="fs-4">
+                <strong>Duración:</strong> {cancion.duracion}
+              </p>
+              <p className="fs-4">
+                <strong>Género:</strong> {cancion.categoria}
+              </p>
+              <p className="fs-4">
+                <strong>Año:</strong> {cancion.anio}
+              </p>
             </Card.Body>
           </Col>
         </Row>
