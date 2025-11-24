@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import img from "../../img/1.png";
-
 import "../../styles/app.css";
+import { crearCancionApi, editarCancionApi } from "../../../services/canciones.service";
 
 const FormularioAdmin = () => {
   const {
@@ -21,12 +20,11 @@ const FormularioAdmin = () => {
   const location = useLocation();
 
   const editar = location.state?.cancion !== undefined;
-  const editarIndex = location.state?.index;
 
   useEffect(() => {
     if (editar) {
       const { cancion } = location.state;
-      setValue("titulo", cancion.titulo);
+      setValue("nombre", cancion.nombre);
       setValue("artista", cancion.artista);
       setValue("categoria", cancion.categoria);
       setValue("imagen", cancion.imagen);
@@ -40,51 +38,45 @@ const FormularioAdmin = () => {
 
   const imagenDefecto = img;
 
-  const onSubmit = (data) => {
-    const nuevaCancion = {
-      id: editar ? location.state.cancion.id : uuidv4(),
-      ...data,
-      imagen:
-        data.imagen && data.imagen.trim() !== "" ? data.imagen : imagenDefecto,
+  const onSubmit = async (data) => {
+    const songFront = {
+      nombre: data.nombre,
+      artista: data.artista,
+      categoria: data.categoria,
+      album: data.album,
+      anio: data.anio,
+      imagen: data.imagen?.trim() ? data.imagen : imagenDefecto,
+      duracion: data.duracion,
     };
 
-    const cancionesGuardadas = localStorage.getItem("canciones");
-    const canciones = cancionesGuardadas ? JSON.parse(cancionesGuardadas) : [];
+    try {
+      if (editar) {
+        await editarCancionApi(location.state.cancion.id, songFront);
+      } else {
+        await crearCancionApi(songFront);
+        reset();
+      }
 
-    if (editar) {
-      canciones[editarIndex] = nuevaCancion;
-    } else {
-      canciones.push(nuevaCancion);
-      reset();
+      Swal.fire({
+        title: editar ? "Cambios guardados" : "Canción creada",
+        icon: "success",
+        confirmButtonText: "OK",
+        customClass: {
+          popup: "swal-popup-custom",
+          confirmButton: "btn-swal-confirm",
+        },
+      }).then(() => navigate("/admin"));
+
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
     }
-
-    localStorage.setItem("canciones", JSON.stringify(canciones));
-
-    Swal.fire({
-      title: editar ? "Cambios guardados" : "Canción creada",
-      text: editar
-        ? "Los datos se actualizaron correctamente"
-        : "Tu canción fue añadida a la lista",
-      icon: "success",
-      confirmButtonText: "OK",
-      customClass: {
-        popup: "swal-popup-custom",
-        confirmButton: "btn-swal-confirm",
-      },
-    }).then(() => navigate("/admin"));
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-window">
-
         <Form className="form-flotante" onSubmit={handleSubmit(onSubmit)}>
-          {/* BOTÓN DE CERRAR */}
-          <Button
-            size="sm"
-            className="btn-close-modal"
-            onClick={() => navigate(-1)}
-          >
+          <Button size="sm" className="btn-close-modal" onClick={() => navigate(-1)}>
             ✖
           </Button>
 
@@ -92,27 +84,22 @@ const FormularioAdmin = () => {
             {editar ? "Editar Canción" : "Crear Canción"}
           </h2>
 
-          {/* TÍTULO */}
           <Form.Group className="mb-3">
-            <Form.Label>Título</Form.Label>
+            <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
               placeholder="Sweet Child O' Mine"
-              {...register("titulo", {
-                required: "El título es obligatorio",
-                minLength: {
-                  value: 3,
-                  message: "Debe tener al menos 3 caracteres",
-                },
+              {...register("nombre", {
+                required: "El nombre es obligatorio",
+                minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
               })}
-              isInvalid={!!errors.titulo}
+              isInvalid={!!errors.nombre}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.titulo?.message}
+              {errors.nombre?.message}
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* ARTISTA */}
           <Form.Group className="mb-3">
             <Form.Label>Artista o Grupo</Form.Label>
             <Form.Control
@@ -120,10 +107,7 @@ const FormularioAdmin = () => {
               placeholder="Guns N' Roses"
               {...register("artista", {
                 required: "El artista es obligatorio",
-                minLength: {
-                  value: 3,
-                  message: "Debe tener al menos 3 caracteres",
-                },
+                minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
               })}
               isInvalid={!!errors.artista}
             />
@@ -132,23 +116,31 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* CATEGORÍA */}
           <Form.Group className="mb-3">
             <Form.Label>Categoría</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Rock"
-              {...register("categoria", {
-                required: "La categoría es obligatoria",
-              })}
+            <Form.Select
+              {...register("categoria", { required: "La categoría es obligatoria" })}
               isInvalid={!!errors.categoria}
-            />
+            >
+              <option value="">Seleccione una opción</option>
+              <option value="Pop">Pop</option>
+              <option value="Rock">Rock</option>
+              <option value="Urbano">Urbano</option>
+              <option value="Balada">Balada</option>
+              <option value="Cumbia">Cumbia</option>
+              <option value="Electrónica">Electrónica</option>
+              <option value="Regueton">Regueton</option>
+              <option value="Tango">Tango</option>
+              <option value="Folcklore">Folcklore</option>
+              <option value="Jazz">Jazz</option>
+              <option value="Romantico">Romantico</option>
+              <option value="Lentos">Lentos</option>
+            </Form.Select>
             <Form.Control.Feedback type="invalid">
               {errors.categoria?.message}
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* ALBUM */}
           <Form.Group className="mb-3">
             <Form.Label>Álbum</Form.Label>
             <Form.Control
@@ -156,10 +148,7 @@ const FormularioAdmin = () => {
               placeholder="Appetite for Destruction"
               {...register("album", {
                 required: "El álbum es obligatorio",
-                minLength: {
-                  value: 2,
-                  message: "Debe tener al menos 2 caracteres",
-                },
+                minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
               })}
               isInvalid={!!errors.album}
             />
@@ -168,7 +157,6 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* AÑO */}
           <Form.Group className="mb-3">
             <Form.Label>Año</Form.Label>
             <Form.Control
@@ -177,10 +165,7 @@ const FormularioAdmin = () => {
               {...register("anio", {
                 required: "El año es obligatorio",
                 min: { value: 1900, message: "Debe ser mayor a 1900" },
-                max: {
-                  value: new Date().getFullYear(),
-                  message: "No puede ser un año futuro",
-                },
+                max: { value: new Date().getFullYear(), message: "No puede ser futuro" },
               })}
               isInvalid={!!errors.anio}
             />
@@ -189,27 +174,15 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* IMAGEN */}
           <Form.Group className="mb-3">
             <Form.Label>Imagen URL*</Form.Label>
             <Form.Control
               type="text"
               placeholder="https://ejemplo.com/imagen.jpg"
-              {...register("imagen", {
-                pattern: {
-                  value: /^https?:\/\/.*\.(jpg|jpeg|png|webp)$/i,
-                  message:
-                    "Debe ser una URL válida de imagen (jpg, jpeg, png o webp)",
-                },
-              })}
-              isInvalid={!!errors.imagen}
+              {...register("imagen")}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.imagen?.message}
-            </Form.Control.Feedback>
           </Form.Group>
 
-          {/* DURACIÓN */}
           <Form.Group className="mb-3">
             <Form.Label>Duración</Form.Label>
             <Form.Control
@@ -217,10 +190,7 @@ const FormularioAdmin = () => {
               placeholder="02:22"
               {...register("duracion", {
                 required: "La duración es obligatoria",
-                pattern: {
-                  value: /^\d{2}:\d{2}$/,
-                  message: "Formato inválido (usar mm:ss)",
-                },
+                pattern: { value: /^\d{2}:\d{2}$/, message: "Formato mm:ss" },
               })}
               isInvalid={!!errors.duracion}
             />
@@ -229,12 +199,10 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* BOTÓN FINAL */}
           <Button type="submit" className="btn-gradient mt-3 w-100">
             {editar ? "Guardar Cambios" : "Crear Canción"}
           </Button>
         </Form>
-
       </div>
     </div>
   );

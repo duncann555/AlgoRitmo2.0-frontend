@@ -1,45 +1,41 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Table, Container, Row, Col } from "react-bootstrap"; // Agregamos Container, Row, Col
+import { Button, Form, Table, Container, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../../styles/admin.css";
+import { getCanciones, borrarCancionApi } from "../../../services/canciones.service";
 
 function Administrador() {
   const navigate = useNavigate();
   const [canciones, setCanciones] = useState([]);
   const [palabraBuscador, setPalabraBuscador] = useState("");
-  const [cancionFiltrada, setcancionFiltrada] = useState([]);
+  const [cancionFiltrada, setCancionFiltrada] = useState([]);
 
-  function manejoCambioBuscador(e) {
-    setPalabraBuscador(e.target.value);
-  }
+  useEffect(() => {
+    const cargar = async () => {
+      const lista = await getCanciones();
+      setCanciones(lista);
+    };
+    cargar();
+  }, []);
 
   useEffect(() => {
     if (palabraBuscador) {
       const codigoBusqueda = parseInt(palabraBuscador);
-      const filtrado = canciones.filter(function (cancion, i) {
-        return (
-          cancion.titulo.toLowerCase().includes(palabraBuscador.toLowerCase()) ||
-          cancion.artista.toLowerCase().includes(palabraBuscador.toLowerCase()) ||
-          (!isNaN(codigoBusqueda) && i + 1 === codigoBusqueda) ||
-          cancion.categoria.toLowerCase().includes(palabraBuscador.toLowerCase())
-        );
-      });
-      setcancionFiltrada(filtrado);
+      const filtrado = canciones.filter((cancion, i) =>
+        cancion.nombre.toLowerCase().includes(palabraBuscador.toLowerCase()) ||
+        cancion.artista.toLowerCase().includes(palabraBuscador.toLowerCase()) ||
+        (!isNaN(codigoBusqueda) && i + 1 === codigoBusqueda) ||
+        cancion.categoria.toLowerCase().includes(palabraBuscador.toLowerCase())
+      );
+      setCancionFiltrada(filtrado);
     } else {
-      setcancionFiltrada(canciones);
+      setCancionFiltrada(canciones);
     }
   }, [palabraBuscador, canciones]);
 
-  useEffect(() => {
-    const data = localStorage.getItem("canciones");
-    if (data) {
-      setCanciones(JSON.parse(data));
-    }
-  }, []);
-
-  function manejoDelete(i) {
-    Swal.fire({
+  const manejoDelete = async (idCancion) => {
+    const result = await Swal.fire({
       title: "¿Estás seguro?",
       text: "Esta acción no se puede deshacer",
       icon: "warning",
@@ -51,33 +47,30 @@ function Administrador() {
         confirmButton: "btn-swal-confirm",
         cancelButton: "btn-swal-cancel",
       },
-    }).then(function (result) {
-      if (result.isConfirmed) {
-        const cancionActual = [...canciones];
-        cancionActual.splice(i, 1);
-        localStorage.setItem("canciones", JSON.stringify(cancionActual));
-        setCanciones(cancionActual);
-        
-        Swal.fire({
-            title: "Eliminada",
-            text: "La canción fue eliminada correctamente",
-            icon: "success",
-            customClass: {
-              popup: "swal-popup-custom",
-              confirmButton: "btn-swal-confirm",
-            },
-          });
-      }
     });
-  }
 
-  function manejoEdit(cancion, index) {
+    if (result.isConfirmed) {
+      await borrarCancionApi(idCancion);
+      setCanciones((prev) => prev.filter((c) => c.id !== idCancion));
+
+      Swal.fire({
+        title: "Eliminada",
+        text: "La canción fue eliminada correctamente",
+        icon: "success",
+        customClass: {
+          popup: "swal-popup-custom",
+          confirmButton: "btn-swal-confirm",
+        },
+      });
+    }
+  };
+
+  const manejoEdit = (cancion, index) => {
     navigate("/admin/formulario", { state: { cancion, index } });
-  }
+  };
 
   return (
     <Container className="admin-panel py-4 mt-4">
-      
       <Row className="justify-content-center align-items-center mb-4">
         <Col xs={12} className="text-center">
           <h1 className="admin-title">Administración de Canciones</h1>
@@ -91,17 +84,15 @@ function Administrador() {
               type="search"
               placeholder="Buscar canción..."
               className="admin-control-buscar flex-grow-1"
-              aria-label="Buscar"
-              onChange={manejoCambioBuscador}
+              onChange={(e) => setPalabraBuscador(e.target.value)}
               value={palabraBuscador}
             />
             <Button
               className="btn-gradient text-nowrap"
               onClick={() => navigate("/admin/formulario")}
             >
-              <i className="bi bi-music-note-beamed me-2"></i> 
-              <span className="d-none d-sm-inline">Agregar</span>
-              <span className="d-inline d-sm-none">+</span>
+              <i className="bi bi-music-note-beamed me-2"></i>
+              Agregar
             </Button>
           </Form>
         </Col>
@@ -113,9 +104,9 @@ function Administrador() {
             <thead>
               <tr className="text-center">
                 <th>N°</th>
-                <th>Título</th>
+                <th>Nombre</th>
                 <th>Artista</th>
-                <th className="d-none d-md-table-cell">Categoría</th> 
+                <th className="d-none d-md-table-cell">Categoría</th>
                 <th className="d-none d-sm-table-cell">Duración</th>
                 <th>Acciones</th>
               </tr>
@@ -125,7 +116,9 @@ function Administrador() {
                 cancionFiltrada.map((cancion, i) => (
                   <tr key={cancion.id}>
                     <td>{i + 1}</td>
-                    <td className="text-truncate" style={{ maxWidth: "150px" }}>{cancion.titulo}</td>
+                    <td className="text-truncate" style={{ maxWidth: "150px" }}>
+                      {cancion.nombre}
+                    </td>
                     <td>{cancion.artista}</td>
                     <td className="d-none d-md-table-cell">{cancion.categoria}</td>
                     <td className="d-none d-sm-table-cell">{cancion.duracion}</td>
@@ -143,7 +136,7 @@ function Administrador() {
                           variant="danger"
                           size="sm"
                           className="admin-button-trash"
-                          onClick={() => manejoDelete(i)}
+                          onClick={() => manejoDelete(cancion.id)}
                         >
                           <i className="bi bi-trash"></i>
                         </Button>

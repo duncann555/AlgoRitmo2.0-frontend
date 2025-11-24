@@ -1,7 +1,7 @@
 const canciones = [
   {
     id: "1",
-    nombreCancion: "Hola Probando",
+    nombreCancion: "Te vi llegar",
     artista: "Miranda",
     categoria: "ElectroPop",
     imagen:

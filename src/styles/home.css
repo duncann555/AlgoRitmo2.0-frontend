@@ -274,6 +274,17 @@
   left: 10px;
 }
 
+/* 1. Estado normal del ícono */
+.icono-check {
+  color: #e8458b;
+  transition: color 0.3s ease; /* Para que el cambio sea suave */
+}
+
+/* 2. Cuando pasas el mouse por el BOTÓN, cambia el ÍCONO */
+.btn-agregar-playlist:hover .icono-check {
+  color: #ffffff;
+}
+
 /* Media queries home */
 @media (max-width: 576px) {
   .btn-playlist-nav-circle {

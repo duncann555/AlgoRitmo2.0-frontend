@@ -1,78 +1,148 @@
-# 🎶 AlgoRitmo  
+🎵 AlgoRitmo 2.0 — Versión Personal by Sebastián Flomenbaun
 
+AlgoRitmo 2.0 es una versión completamente rediseñada, optimizada y ampliada del proyecto grupal original.
+Este proyecto refleja una visión más sólida, profesional y escalable, incorporando:
 
-**AlgoRitmo** te invita a redescubrir la música. Más que una simple base de datos, es tu espacio personal para curar el soundtrack de tu vida.  
+Backend real con Node + Express + MongoDB
 
-Con un nombre que juega con la esencia de la **lógica** y el **ritmo**, esta plataforma te permite gestionar tus canciones favoritas de forma intuitiva.  
+Frontend moderno con React + Vite
 
-Crea, edita y revive esos temas que te transportan a tus mejores recuerdos.  
+Sistema de usuarios, login y playlist personalizada
 
----
+Panel de administración completo para gestionar canciones
 
-## 👥 Autores  
+Diseño inspirado en apps de streaming musicales modernas
 
-Este proyecto fue desarrollado por un talentoso equipo:  
+Esta versión personal fue construida tomando la idea original y llevándola a un nivel superior.
 
-- [GOMEZ TOLRÁ, Maximiliano](https://github.com/masheee)
+✨ ¿Qué es AlgoRitmo?
 
-- [GUERRERO, Maximiliano](https://github.com/maxiguerrero767)
+Es una plataforma de streaming musical que te permite:
 
-- [JUÁREZ, Mariano](https://github.com/cmjuarez95)
+Explorar canciones
 
-- [CABANA, Paula](https://github.com/TaliCabana) 
+Administrar una playlist personal
 
-- [FLOMENBAUN, Sebastián](https://github.com/duncann555)
+Iniciar sesión con tu cuenta
 
-- [LEDESMA PADILLA, José Ignacio](https://github.com/ledesmapadilla)
+Crear / editar / borrar canciones desde un panel administrativo
 
----
+Visualizar detalles, álbum, artista, duración, género, etc.
 
-## 🚀 Funcionalidades destacadas  
+AlgoRitmo combina lógica, ritmo y una experiencia visual cuidada, manteniendo simpleza y velocidad.
 
-- **Crear nuevas canciones**: Agrega tus temas a una base de datos personal.  
+👨‍💻 Autor
 
-- **Editar detalles**: Actualiza la información para mantener tus colecciones al día.  
+Este proyecto fue creado y desarrollado íntegramente por:
 
-- **Eliminar canciones**: Limpia tu lista y deja solo lo que realmente te inspira.  
+Sebastián Flomenbaun
 
----
+🔗 GitHub: https://github.com/duncann555
 
-## 🛠️ Tecnologías Utilizadas  
+🚀 Funcionalidades Principales
+🎧 Usuarios
 
-![HTML](https://img.shields.io/badge/HTML-5-6A0DAD?logo=html5&logoColor=white&style=for-the-badge)  
+Registro de usuarios
 
-![CSS](https://img.shields.io/badge/CSS-3-6A0DAD?logo=css3&logoColor=white&style=for-the-badge)  
+Login
 
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-6A0DAD?logo=javascript&logoColor=white&style=for-the-badge)  
+Protección de rutas
 
-![React](https://img.shields.io/badge/React-18-6A0DAD?logo=react&logoColor=white&style=for-the-badge)  
+Sesión persistente
 
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5-6A0DAD?logo=bootstrap&logoColor=white&style=for-the-badge)  
+Playlists personalizadas por usuario
 
----
+🎼 Canciones
 
-## 🔗 Enlaces Útiles  
+Crear canciones
 
-![GitHub](https://img.shields.io/badge/GitHub-Repo-6A0DAD?logo=github&logoColor=white&style=for-the-badge)) → [Repositorio en GitHub](https://github.com/masheee/AlgoRitmo))  
+Editarlas
 
-![Netlify](https://img.shields.io/badge/Netlify-Sitio-6A0DAD?logo=netlify&logoColor=white&style=for-the-badge)) → [Sitio desplegado](https://algoritmo-c13.netlify.app/))  
+Borrarlas
 
----
+Listarlas
 
-## 📌 Cómo Usarlo  
+Buscador inteligente
 
-Para clonar este repositorio y ejecutarlo en tu máquina local, sigue estos pasos:  
+🧩 Panel Administrador
 
-```bash
+CRUD completo
 
-# 1. Abre tu terminal
+Validaciones
 
-# 2. Clona el repositorio
+Vista tipo dashboard
 
-git clone https://github.com/masheee/AlgoRitmo.git  
+Navegación interna protegida
 
-# 3. Ingresa al directorio del proyecto
+❤️ Playlist personalizada
 
-cd AlgoRitmo  
+Agregar canciones
 
-# 4. Abre el archivo index.html en tu navegador
+Quitar canciones
+
+Vista tipo "Mini cards”
+
+Detalles individuales
+
+🛠️ Tecnologías Utilizadas
+Frontend
+
+React 19
+
+Vite
+
+React Router DOM
+
+Bootstrap 5
+
+SweetAlert2
+
+React Hook Form
+
+Backend
+
+Node.js
+
+Express
+
+MongoDB + Mongoose
+
+CORS
+
+Morgan
+
+📦 Instalación y Uso
+1️⃣ Clonar el repositorio
+git clone https://github.com/duncann555/AlgoRitmo2.0-frontend.git
+
+2️⃣ Instalar dependencias
+npm install
+
+3️⃣ Ejecutar el proyecto
+npm run dev
+
+4️⃣ Backend
+
+Si usás backend propio:
+
+npm start
+
+Editar .env con:
+
+PORT=3000
+MONGODB=tu_uri_de_mongo
+
+🔗 Enlaces Importantes
+
+(Agregá los tuyos si ya tenés deploy)
+
+🌐 Sitio desplegado: —
+
+💻 Backend: —
+
+📁 Repo original (grupal, opcional): —
+
+📜 Licencia
+
+Este proyecto es completamente personal y libre para revisión, estudio y mejora.
+No forma parte del repositorio grupal original.

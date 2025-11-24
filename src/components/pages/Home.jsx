@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Row, Col, Button, Card, Form } from "react-bootstrap";
-import canciones from "../../Data/CancionesInicio.js";
 import "../../styles/home.css";
-import Playlist from "../pages/PlayLists.jsx";
-import { FaMusic } from "react-icons/fa";
-import { FaPlus, FaCheck } from "react-icons/fa";
+import PlaylistSidebar from "../pages/PlayLists.jsx"; // tu componente sidebar
+import { FaMusic, FaPlus, FaCheck } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { getCanciones } from "../../../services/canciones.service";
+import { getPlaylist, addToPlaylistApi, removeFromPlaylistApi } from "../../../services/playlist.service";
 
 const ITEMS_POR_VISTA = 6;
 
@@ -16,51 +17,55 @@ const Home = () => {
   const [indicePlaylist, setIndicePlaylist] = useState(0);
 
   const navigate = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("usuarioKey")) || false;
 
-  // === CARGAR PLAYLIST DESDE LOCALSTORAGE ===
+  // canciones desde backend
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("playlist")) || [];
-    setPlaylist(data);
+    const cargar = async () => {
+      const lista = await getCanciones();
+      setTodasLasCanciones(lista);
+    };
+    cargar();
   }, []);
 
-  // === CARGAR CANCIONES ===
+  // playlist del usuario desde backend
   useEffect(() => {
-    const cancionesGuardadas =
-      JSON.parse(localStorage.getItem("canciones")) || [];
-    setTodasLasCanciones([...canciones, ...cancionesGuardadas]);
+    const cargarPlaylist = async () => {
+      if (!user?.id) return setPlaylist([]);
+      const pl = await getPlaylist(user.id);
+      setPlaylist(pl);
+    };
+    cargarPlaylist();
   }, []);
 
-  // === AGREGAR A PLAYLIST (BANNER + CARDS) ===
-  const agregarAPlaylist = (song) => {
+  const agregarAPlaylist = async (song) => {
+    if (!user?.id) {
+      Swal.fire("Login requerido", "Logueate para usar playlists", "info");
+      navigate("/login");
+      return;
+    }
+
+    await addToPlaylistApi(user.id, song.id);
+
     setPlaylist((prev) => {
-      const yaExiste = prev.some((item) => item.id === song.id);
-      if (yaExiste) return prev;
-
-      const nuevaLista = [...prev, song];
-      localStorage.setItem("playlist", JSON.stringify(nuevaLista));
-      return nuevaLista;
+      const yaExiste = prev.some((p) => p.id === song.id);
+      return yaExiste ? prev : [...prev, song];
     });
   };
 
-  // === QUITAR DE PLAYLIST (SIDEBAR + BANNER) ===
-  const quitarDePlaylist = (id) => {
-    setPlaylist((prev) => {
-      const nuevaLista = prev.filter((item) => item.id !== id);
-      localStorage.setItem("playlist", JSON.stringify(nuevaLista));
-      return nuevaLista;
-    });
+  const quitarDePlaylist = async (id) => {
+    if (!user?.id) return;
+
+    await removeFromPlaylistApi(user.id, id);
+    setPlaylist((prev) => prev.filter((p) => p.id !== id));
   };
 
-  // === CARRUSEL DEL BANNER ===
   const playlistVisible = () => {
     const total = playlist.length;
     if (total <= ITEMS_POR_VISTA) return playlist;
 
     const fin = indicePlaylist + ITEMS_POR_VISTA;
-
-    if (fin <= total) {
-      return playlist.slice(indicePlaylist, fin);
-    }
+    if (fin <= total) return playlist.slice(indicePlaylist, fin);
 
     const sobrante = fin - total;
     return [
@@ -81,28 +86,18 @@ const Home = () => {
     );
   };
 
-  // === FILTRO DE BÚSQUEDA ===
   const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
-    const textoBusqueda = busqueda.toLowerCase();
-
-    const titulo = (
-      cancion.nombreCancion ||
-      cancion.titulo ||
-      ""
-    ).toLowerCase();
-    const artista = (cancion.artista || "").toLowerCase();
-    const categoria = (cancion.categoria || "").toLowerCase();
-
+    const texto = busqueda.toLowerCase();
     return (
-      titulo.includes(textoBusqueda) ||
-      artista.includes(textoBusqueda) ||
-      categoria.includes(textoBusqueda)
+      cancion.nombre.toLowerCase().includes(texto) ||
+      cancion.artista.toLowerCase().includes(texto) ||
+      cancion.categoria.toLowerCase().includes(texto)
     );
   });
 
   return (
     <Row className="g-4 mt-3">
-      {/* === SIDEBAR === */}
+      {/* SIDEBAR */}
       <Col xs={12} lg={4} xl={3} className="mb-4 mb-lg-0">
         <aside className="spotify-sidebar text-white sidebar-sticky">
           <h3 className="logo-sidebar mb-4 text-center">
@@ -129,14 +124,14 @@ const Home = () => {
               Limpiar
             </Button>
 
-            <Playlist playlist={playlist} onRemove={quitarDePlaylist} />
+            <PlaylistSidebar playlist={playlist} onRemove={quitarDePlaylist} />
           </div>
         </aside>
       </Col>
 
-      {/* === CONTENIDO PRINCIPAL === */}
+      {/* CONTENIDO */}
       <Col xs={12} lg={8} xl={9}>
-        {/* === BANNER === */}
+        {/* BANNER */}
         <section className="banner-playlist mb-4 mb-lg-5 position-relative">
           <div className="banner-info">
             <p className="categoria-banner mb-1">Playlist</p>
@@ -149,7 +144,6 @@ const Home = () => {
 
           {playlist.length > 0 && (
             <>
-              {/* Botones grandes laterales */}
               <Button
                 type="button"
                 onClick={anteriorPlaylist}
@@ -170,118 +164,95 @@ const Home = () => {
                 <h3 className="playlist-subtitle mb-2">Tu playlist favorita</h3>
 
                 <div className="playlist-banner-container mt-2 pb-5">
-                  {playlistVisible().map((cancion) => {
-                    const nombre =
-                      cancion.nombreCancion || cancion.titulo || "Sin título";
-                    const artista = cancion.artista || "Desconocido";
-
-                    return (
-                      <div key={cancion.id} className="playlist-mini-card">
-                        <div
-                          className="playlist-mini-main"
-                          onClick={() => navigate(`/detalles/${cancion.id}`)}
-                        >
-                          <img
-                            src={cancion.imagen || "/defecto.png"}
-                            alt={nombre}
-                            className="playlist-mini-img"
-                          />
-                          <div className="playlist-mini-info">
-                            <p className="playlist-mini-title">
-                              {nombre} - {artista}
-                            </p>
-                          </div>
+                  {playlistVisible().map((cancion) => (
+                    <div key={cancion.id} className="playlist-mini-card">
+                      <div
+                        className="playlist-mini-main"
+                        onClick={() => navigate(`/detalles/${cancion.id}`)}
+                      >
+                        <img
+                          src={cancion.imagen || "/defecto.png"}
+                          alt={cancion.nombre}
+                          className="playlist-mini-img"
+                        />
+                        <div className="playlist-mini-info">
+                          <p className="playlist-mini-title">
+                            {cancion.nombre} - {cancion.artista}
+                          </p>
                         </div>
-
-                        <Button
-                          variant="outline-light"
-                          size="sm"
-                          className="btn-remove-pill btn-remove-playlist mt-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            quitarDePlaylist(cancion.id);
-                          }}
-                        >
-                          <i className="bi bi-x-lg" />
-                        </Button>
                       </div>
-                    );
-                  })}
+
+                      <Button
+                        variant="outline-light"
+                        size="sm"
+                        className="btn-remove-pill btn-remove-playlist mt-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          quitarDePlaylist(cancion.id);
+                        }}
+                      >
+                        <i className="bi bi-x-lg" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
           )}
         </section>
 
-        {/* === RESULTADO DE BÚSQUEDA VACÍO === */}
-        {busqueda.trim() !== "" && cancionesFiltradas.length === 0 && (
-          <h4 className="text-danger mt-4">
-            <i className="bi bi-emoji-frown" /> No se encontró ninguna canción
-          </h4>
-        )}
-
-        {/* === GRID DE CANCIONES === */}
+        {/* GRID */}
         <section className="mt-4">
           <h3 className="mb-3 text-white">Canciones</h3>
 
           <Row className="gy-4">
-            {(busqueda.trim() !== ""
-              ? cancionesFiltradas
-              : todasLasCanciones
-            ).map((cancion, index) => (
-              <Col key={index} xs={12} sm={6} md={4} lg={3}>
-                <Card className="h-100 rounded-4 overflow-hidden cardSpotify">
-                  <div className="card-img-wrapper">
-                    <Card.Img
-                      variant="top"
-                      src={cancion.imagen || "/defecto.png"}
-                      className="cardImg"
-                    />
+            {(busqueda.trim() !== "" ? cancionesFiltradas : todasLasCanciones)
+              .map((cancion, index) => (
+                <Col key={index} xs={12} sm={6} md={4} lg={3}>
+                  <Card className="h-100 rounded-4 overflow-hidden cardSpotify">
+                    <div className="card-img-wrapper">
+                      <Card.Img
+                        variant="top"
+                        src={cancion.imagen || "/defecto.png"}
+                        className="cardImg"
+                      />
 
-                    <Link
-                      to={`/detalles/${cancion.id}`}
-                      className="play-btn-overlay"
-                    >
-                      <i className="bi bi-play-circle-fill play-btn" />
-                    </Link>
-                  </div>
+                      <Link
+                        to={`/detalles/${cancion.id}`}
+                        className="play-btn-overlay"
+                      >
+                        <i className="bi bi-play-circle-fill play-btn" />
+                      </Link>
+                    </div>
 
-                  <Card.Body className="text-center">
-                    <Card.Title>{cancion.artista}</Card.Title>
-                    <Card.Text>
-                      {cancion.nombreCancion || cancion.titulo}
-                    </Card.Text>
+                    <Card.Body className="text-center">
+                      <Card.Title>{cancion.artista}</Card.Title>
+                      <Card.Text>{cancion.nombre}</Card.Text>
 
-                    <Button
-                      className={`mt-2 ${
-                        playlist.some((p) => p.id === cancion.id)
-                          ? "btn-agregar-playlist"
-                          : "btn-gradient"
-                      }`}
-                      onClick={() => agregarAPlaylist(cancion)}
-                    >
-                      {playlist.some((p) => p.id === cancion.id) ? (
-                        <>
-                          <FaCheck
-                            style={{ color: "#e8458b" }}
-                            className="me-2"
-                          />
-                          Agregada
-                        </>
-                      ) : (
-                        <>
-                          <FaPlus
-                            style={{ color: "#ffffffff"}}
-                            className="me-2 fs-5"
-                          />
-                          Agregar
-                        </>
-                      )}
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+                      <Button
+                        className={`mt-2 ${
+                          playlist.some((p) => p.id === cancion.id)
+                            ? "btn-agregar-playlist"
+                            : "btn-gradient"
+                        }`}
+                        onClick={() => agregarAPlaylist(cancion)}
+                      >
+                        {playlist.some((p) => p.id === cancion.id) ? (
+                          <>
+                            <FaCheck className="me-2 icono-check" />
+                            Agregada
+                          </>
+                        ) : (
+                          <>
+                            <FaPlus className="me-2 fs-5" />
+                            Agregar
+                          </>
+                        )}
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
           </Row>
         </section>
       </Col>
