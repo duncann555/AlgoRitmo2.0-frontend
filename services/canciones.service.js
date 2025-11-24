@@ -1,6 +1,6 @@
 import { fromApiSong, toApiSong } from "./mappers";
 
-const BASE = "http://localhost:3000/api/canciones";
+const BASE = "https://algo-ritmo2-0-backend.vercel.app/api";
 
 export const getCanciones = async () => {
   const r = await fetch(BASE);

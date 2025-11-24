@@ -1,6 +1,6 @@
 import { fromApiSong } from "./mappers";
 
-const BASE = "http://localhost:3000/api/playlist";
+const BASE = "https://algo-ritmo2-0-backend.vercel.app/api/playlist";
 
 export const getPlaylist = async (userId) => {
   const r = await fetch(`${BASE}/${userId}`);
