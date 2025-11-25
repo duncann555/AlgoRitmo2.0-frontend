@@ -44,7 +44,7 @@ export default function App() {
 
     // Fallback: saco lo básico del token
     return {
-      uid: datosToken.uid,
+      uid: datosToken.id,
       nombre: datosToken.nombre,
       rol: datosToken.rol,
     };

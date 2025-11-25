@@ -1,27 +1,26 @@
+// ===================
+// VARIABLES GLOBALES
+// ===================
 const URL_CANCIONES = import.meta.env.VITE_API_CANCIONES;
 const URL_PLAYLIST = import.meta.env.VITE_API_PLAYLIST;
 const URL_USUARIOS = import.meta.env.VITE_API_USUARIOS;
 
-// Token: se lee siempre de donde lo guardás en el Login
-const obtenerToken = () => {
-  return localStorage.getItem("token") || "";
-};
+// Token desde localStorage
+const obtenerToken = () => localStorage.getItem("token") || "";
 
-/* --------------- CANCIONES --------------- */
+/* ========================
+       CANCIONES
+========================= */
 
 export const listarCanciones = async () => {
   try {
     const respuesta = await fetch(URL_CANCIONES);
 
-    if (!respuesta.ok) {
-      console.error("Error al listar canciones:", respuesta.status);
-      return []; // devolvemos SIEMPRE array
-    }
+    if (!respuesta.ok) return [];
 
     const data = await respuesta.json();
     return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error("Error de red al listar canciones", error);
+  } catch {
     return [];
   }
 };
@@ -29,139 +28,110 @@ export const listarCanciones = async () => {
 export const obtenerCancionPorId = async (id) => {
   try {
     const respuesta = await fetch(`${URL_CANCIONES}/${id}`);
-
-    if (!respuesta.ok) {
-      console.error("Error al obtener canción por ID:", respuesta.status);
-      return null; // para que el front muestre "Canción no encontrada"
-    }
-
-    const data = await respuesta.json();
-    // si tu back devuelve directamente la canción, esto ya está bien
-    return data || null;
-  } catch (error) {
-    console.error("Error de red al obtener canción por ID", error);
+    if (!respuesta.ok) return null;
+    return await respuesta.json();
+  } catch {
     return null;
   }
 };
 
 export const crearCancionAPI = async (cancion) => {
   try {
-    const respuesta = await fetch(URL_CANCIONES, {
+    return await fetch(URL_CANCIONES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-token": obtenerToken(),
+        Authorization: `Bearer ${obtenerToken()}`,
       },
       body: JSON.stringify(cancion),
     });
-
-    // Devolvemos el Response crudo para que el componente use .status /.ok
-    return respuesta;
-  } catch (error) {
-    console.error("Error de red al crear canción", error);
+  } catch {
     return null;
   }
 };
 
 export const editarCancionAPI = async (id, cancion) => {
   try {
-    const respuesta = await fetch(`${URL_CANCIONES}/${id}`, {
+    return await fetch(`${URL_CANCIONES}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "x-token": obtenerToken(),
+        Authorization: `Bearer ${obtenerToken()}`,
       },
       body: JSON.stringify(cancion),
     });
-
-    return respuesta;
-  } catch (error) {
-    console.error("Error de red al editar canción", error);
+  } catch {
     return null;
   }
 };
 
 export const borrarCancionAPI = async (id) => {
   try {
-    const respuesta = await fetch(`${URL_CANCIONES}/${id}`, {
+    return await fetch(`${URL_CANCIONES}/${id}`, {
       method: "DELETE",
       headers: {
-        "x-token": obtenerToken(),
+        Authorization: `Bearer ${obtenerToken()}`,
       },
     });
-
-    return respuesta;
-  } catch (error) {
-    console.error("Error de red al borrar canción", error);
+  } catch {
     return null;
   }
 };
 
-/* --------------- PLAYLIST --------------- */
+/* ========================
+        PLAYLIST
+========================= */
 
 export const obtenerPlaylist = async (userId) => {
   try {
-    const respuesta = await fetch(`${URL_PLAYLIST}/${userId}`);
+    const respuesta = await fetch(`${URL_PLAYLIST}/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${obtenerToken()}`,
+      },
+    });
 
-    if (!respuesta.ok) {
-      console.error("Error al obtener playlist:", respuesta.status);
-      return [];
-    }
+    if (!respuesta.ok) return [];
 
     const data = await respuesta.json();
 
-    // Asumo que tu back manda algo tipo { canciones: [...] }
-    if (Array.isArray(data.canciones)) {
-      return data.canciones;
-    }
-
-    // Por si tu back devuelve directamente un array
-    if (Array.isArray(data)) {
-      return data;
-    }
+    if (Array.isArray(data.canciones)) return data.canciones;
+    if (Array.isArray(data)) return data;
 
     return [];
-  } catch (error) {
-    console.error("Error de red al obtener playlist", error);
+  } catch {
     return [];
   }
 };
 
 export const agregarAplaylistAPI = async (userId, cancionId) => {
   try {
-    const respuesta = await fetch(
+    return await fetch(
       `${URL_PLAYLIST}/${userId}/agregar/${cancionId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-token": obtenerToken(), // protegida por token
+          Authorization: `Bearer ${obtenerToken()}`,
         },
       }
     );
-
-    return respuesta; // el componente mira .ok
-  } catch (error) {
-    console.error("Error de red al agregar a playlist", error);
+  } catch {
     return null;
   }
 };
 
 export const borrarDePlaylistAPI = async (userId, cancionId) => {
   try {
-    const respuesta = await fetch(
+    return await fetch(
       `${URL_PLAYLIST}/${userId}/borrar/${cancionId}`,
       {
         method: "DELETE",
         headers: {
-          "x-token": obtenerToken(),
+          Authorization: `Bearer ${obtenerToken()}`,
         },
       }
     );
-
-    return respuesta;
-  } catch (error) {
-    console.error("Error de red al borrar de playlist", error);
+  } catch {
     return null;
   }
 };

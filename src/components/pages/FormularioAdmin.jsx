@@ -3,7 +3,6 @@ import { Button, Form } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import img from "../../img/1.png";
 import "../../styles/app.css";
 import { crearCancionAPI, editarCancionAPI } from "../../helpers/queries";
 
@@ -19,6 +18,7 @@ const FormularioAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Detectamos si estamos editando
   const editar = location.state?.cancion !== undefined;
 
   useEffect(() => {
@@ -36,8 +36,6 @@ const FormularioAdmin = () => {
     }
   }, [editar]);
 
-  const imagenDefecto = img;
-
   const onSubmit = async (data) => {
     const objetoCancion = {
       nombre: data.nombre,
@@ -45,7 +43,7 @@ const FormularioAdmin = () => {
       categoria: data.categoria,
       album: data.album,
       anio: data.anio,
-      imagen: data.imagen?.trim() ? data.imagen : imagenDefecto,
+      imagen: data.imagen,   // ← SIN DEFAULT. OBLIGATORIA.
       duracion: data.duracion,
     };
 
@@ -100,6 +98,7 @@ const FormularioAdmin = () => {
             {editar ? "Editar Canción" : "Crear Canción"}
           </h2>
 
+          {/* NOMBRE */}
           <Form.Group className="mb-3">
             <Form.Label>Nombre</Form.Label>
             <Form.Control
@@ -107,14 +106,8 @@ const FormularioAdmin = () => {
               placeholder="Ingrese nombre de la cancion"
               {...register("nombre", {
                 required: "El nombre es obligatorio",
-                minLength: {
-                  value: 3,
-                  message: "Debe tener al menos 3 caracteres",
-                },
-                maxLength: {
-                  value: 40,
-                  message: "Debe tener maximo 40 caracteres",
-                },
+                minLength: { value: 3, message: "Mínimo 3 caracteres" },
+                maxLength: { value: 40, message: "Máximo 40 caracteres" },
               })}
               isInvalid={!!errors.nombre}
             />
@@ -123,6 +116,7 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* ARTISTA */}
           <Form.Group className="mb-3">
             <Form.Label>Artista o Grupo</Form.Label>
             <Form.Control
@@ -130,14 +124,8 @@ const FormularioAdmin = () => {
               placeholder="Ingrese nombre del artista o grupo"
               {...register("artista", {
                 required: "El artista es obligatorio",
-                minLength: {
-                  value: 3,
-                  message: "Debe tener al menos 3 caracteres",
-                },
-                maxLength: {
-                  value: 40,
-                  message: "Debe tener maximo 40 caracteres",
-                },
+                minLength: { value: 3, message: "Mínimo 3 caracteres" },
+                maxLength: { value: 40, message: "Máximo 40 caracteres" },
               })}
               isInvalid={!!errors.artista}
             />
@@ -146,6 +134,7 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* CATEGORÍA */}
           <Form.Group className="mb-3">
             <Form.Label>Categoría</Form.Label>
             <Form.Select
@@ -173,6 +162,7 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* ALBUM */}
           <Form.Group className="mb-3">
             <Form.Label>Álbum</Form.Label>
             <Form.Control
@@ -180,14 +170,8 @@ const FormularioAdmin = () => {
               placeholder="Ingrese nombre del album"
               {...register("album", {
                 required: "El álbum es obligatorio",
-                minLength: {
-                  value: 2,
-                  message: "Debe tener al menos 2 caracteres",
-                },
-                maxLength: {
-                  value: 40,
-                  message: "Debe tener maximo 40 caracteres",
-                },
+                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+                maxLength: { value: 40, message: "Máximo 40 caracteres" },
               })}
               isInvalid={!!errors.album}
             />
@@ -196,6 +180,7 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* AÑO */}
           <Form.Group className="mb-3">
             <Form.Label>Año</Form.Label>
             <Form.Control
@@ -216,6 +201,7 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* IMAGEN */}
           <Form.Group className="mb-3">
             <Form.Label>Imagen URL</Form.Label>
             <Form.Control
@@ -225,27 +211,29 @@ const FormularioAdmin = () => {
                 required: "La imagen es obligatoria",
                 pattern: {
                   value: /^https?:\/\/.*\.(jpg|jpeg|png)$/i,
-                  message: "Debe ser un enlace a una imagen JPG o PNG",
+                  message: "Debe ser una imagen JPG o PNG válida",
                 },
               })}
               isInvalid={!!errors.imagen}
             />
-            <Form.Control.Feedback
-              type="invalid"
-              className="d-block text-danger"
-            >
+
+            <Form.Control.Feedback type="invalid" className="d-block text-danger">
               {errors.imagen?.message}
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* DURACION */}
           <Form.Group className="mb-3">
             <Form.Label>Duración (mm:ss)</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese duracion de la cancion"
+              placeholder="00:00"
               {...register("duracion", {
                 required: "La duración es obligatoria",
-                pattern: { value: /^\d{2}:\d{2}$/, message: "Formato mm:ss" },
+                pattern: {
+                  value: /^\d{2}:\d{2}$/,
+                  message: "Formato correcto: mm:ss",
+                },
               })}
               isInvalid={!!errors.duracion}
             />

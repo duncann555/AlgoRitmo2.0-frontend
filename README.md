@@ -1,88 +1,90 @@
-🎵 AlgoRitmo 2.0 — Versión Personal by Sebastián Flomenbaun
+🎵 AlgoRitmo 2.0 — Versión Personal
+by Sebastián Flomenbaun
 
-AlgoRitmo 2.0 es una versión completamente rediseñada, optimizada y ampliada del proyecto grupal original.
-Este proyecto refleja una visión más sólida, profesional y escalable, incorporando:
+AlgoRitmo 2.0 es una versión completamente rediseñada, mejorada y potenciada del proyecto grupal original.
+Tomé la idea base y la reconstruí desde cero con un enfoque más profesional, escalable y moderno.
 
-Backend real con Node + Express + MongoDB
+Incluye:
 
-Frontend moderno con React + Vite
+Backend real (Node + Express + MongoDB Atlas)
 
-Sistema de usuarios, login y playlist personalizada
+Frontend moderno (React + Vite)
 
-Panel de administración completo para gestionar canciones
+Sistema de usuarios completo
 
-Diseño inspirado en apps de streaming musicales modernas
+Playlist personalizada
 
-Esta versión personal fue construida tomando la idea original y llevándola a un nivel superior.
+Panel administrador
+
+Interfaz inspirada en plataformas de streaming actuales
 
 ✨ ¿Qué es AlgoRitmo?
 
-Es una plataforma de streaming musical que te permite:
+Es una plataforma musical donde podés:
 
 Explorar canciones
 
-Administrar una playlist personal
+Crear tu playlist personal
 
-Iniciar sesión con tu cuenta
+Iniciar sesión
 
-Crear / editar / borrar canciones desde un panel administrativo
+Agregar o quitar temas
 
-Visualizar detalles, álbum, artista, duración, género, etc.
+Crear / editar / borrar canciones desde un panel de admin
 
-AlgoRitmo combina lógica, ritmo y una experiencia visual cuidada, manteniendo simpleza y velocidad.
+Ver detalles de cada canción (álbum, artista, duración, género, etc.)
+
+El proyecto combina lógica + diseño + fluidez, logrando una experiencia limpia, rápida y muy intuitiva.
 
 👨‍💻 Autor
 
-Este proyecto fue creado y desarrollado íntegramente por:
-
 Sebastián Flomenbaun
-
 🔗 GitHub: https://github.com/duncann555
 
 🚀 Funcionalidades Principales
 🎧 Usuarios
 
-Registro de usuarios
+Registro
 
 Login
 
+Sesión persistente mediante JWT
+
 Protección de rutas
 
-Sesión persistente
-
-Playlists personalizadas por usuario
+Playlist personalizada para cada usuario
 
 🎼 Canciones
 
-Crear canciones
+Crear nuevas canciones
 
 Editarlas
 
-Borrarlas
+Eliminarlas
 
 Listarlas
 
-Buscador inteligente
+Buscador inteligente por nombre, artista o género
 
 🧩 Panel Administrador
 
-CRUD completo
-
-Validaciones
+CRUD completo de canciones
 
 Vista tipo dashboard
 
-Navegación interna protegida
+Acceso restringido solo a administradores
 
-❤️ Playlist personalizada
+Validaciones completas
 
-Agregar canciones
+❤️ Playlist Personal
 
-Quitar canciones
+Agregar canciones desde la lista general
 
-Vista tipo "Mini cards”
+Quitarlas rápidamente
 
-Detalles individuales
+Vista tipo mini-cards
+
+Reproducción individual (mock reproductor)
 
 🛠️ Tecnologías Utilizadas
 Frontend
@@ -95,9 +97,9 @@ React Router DOM
 
 Bootstrap 5
 
-SweetAlert2
-
 React Hook Form
+
+SweetAlert2
 
 Backend
 
@@ -111,9 +113,15 @@ CORS
 
 Morgan
 
+
 📦 Instalación y Uso
 1️⃣ Clonar el repositorio
-git clone https://github.com/duncann555/AlgoRitmo2.0-frontend.git
+git clone https://github.com/duncann555/AlgoRitmo2.0-frontend
+
+
+o el backend:
+
+git clone https://github.com/duncann555/AlgoRitmo2.0-backend
 
 2️⃣ Instalar dependencias
 npm install
@@ -121,28 +129,29 @@ npm install
 3️⃣ Ejecutar el proyecto
 npm run dev
 
-4️⃣ Backend
+🖥️ Backend (si usás tu propio server)
+Instalar dependencias:
+npm install
 
-Si usás backend propio:
-
+Ejecutar:
 npm start
 
-Editar .env con:
-
+Archivo .env necesario:
 PORT=3000
 MONGODB=tu_uri_de_mongo
+SECRET_JWT=tu_clave_secreta
 
 🔗 Enlaces Importantes
 
-(Agregá los tuyos si ya tenés deploy)
+🌐 Sitio desplegado (Frontend): https://algoritmo-2.netlify.app/
 
-🌐 Sitio desplegado: —
+💻 Backend desplegado: https://algo-ritmo2-0-backend.vercel.app/
 
-💻 Backend: —
+📁 Repositorio Frontend: https://github.com/duncann555/AlgoRitmo2.0-frontend
 
-📁 Repo original (grupal, opcional): —
+📁 Repositorio Backend: https://github.com/duncann555/AlgoRitmo2.0-backend
 
 📜 Licencia
 
-Este proyecto es completamente personal y libre para revisión, estudio y mejora.
-No forma parte del repositorio grupal original.
+Este proyecto es 100% personal, creado con fines educativos y de práctica profesional.
+Es completamente libre para revisión, estudio, forkeo y mejora.
