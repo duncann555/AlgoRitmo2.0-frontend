@@ -9,6 +9,8 @@ import "../../styles/login.css";
 const BASE_USERS = import.meta.env.VITE_API_USUARIOS;
 
 const LoginPage = ({ setUsuarioLogueado }) => {
+  console.log("ENV:", import.meta.env);
+
   const [show, setShow] = useState(true);
   const [modo, setModo] = useState("login");
   const navigate = useNavigate();
