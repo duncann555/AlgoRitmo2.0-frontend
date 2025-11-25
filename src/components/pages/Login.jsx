@@ -72,31 +72,34 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarRegistro = async (data) => {
-    try {
-      const r = await fetch(`${BASE_USERS}/register`, {
-        // Asegurate que la ruta sea correcta en tu back
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: data.nombre,
-          email: data.email,
-          password: data.password,
-        }),
-      });
-      const res = await r.json();
+  try {
+    const r = await fetch(`${BASE_USERS}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombre: data.nombre,
+        email: data.email,
+        password: data.password,
+        confirmarPassword: data.confirmarPassword,
+      }),
+    });
 
-      if (!r.ok) {
-        Swal.fire("Error", res.mensaje || "Error al registrar", "error");
-        return;
-      }
+    const res = await r.json();
 
-      Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
-      setModo("login");
-      reset({ email: data.email, password: "" });
-    } catch (e) {
-      Swal.fire("Error", "Ocurrió un error en el registro", "error");
+    if (!r.ok) {
+      Swal.fire("Error", res.mensaje || "Error al registrar", "error");
+      return;
     }
-  };
+
+    Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
+    setModo("login");
+    reset({ email: data.email, password: "" });
+
+  } catch (e) {
+    Swal.fire("Error", "Ocurrió un error en el registro", "error");
+  }
+};
+
 
   return (
     <Modal
