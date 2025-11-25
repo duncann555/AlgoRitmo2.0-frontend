@@ -52,7 +52,6 @@ function Administrador() {
       const respuesta = await borrarCancionAPI(idCancion);
 
       if (respuesta && respuesta.ok) {
-        // Actualizamos la tabla visualmente quitando la canción borrada
         setCanciones((prev) =>
           prev.filter((c) => (c.id || c._id) !== idCancion)
         );

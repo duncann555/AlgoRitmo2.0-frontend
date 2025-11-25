@@ -36,7 +36,7 @@ const FormularioAdmin = () => {
     } else {
       reset();
     }
-  }, [editar, location.state, setValue, reset]);
+  }, [editar]);
 
   const imagenDefecto = img;
 
