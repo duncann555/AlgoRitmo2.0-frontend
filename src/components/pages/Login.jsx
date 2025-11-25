@@ -21,7 +21,6 @@ const LoginPage = ({ setUsuarioLogueado }) => {
     reset,
   } = useForm();
 
-  // Movi esto arriba para tenerlo ordenado, pero funciona igual
   const password = watch("password");
 
   const handleClose = () => {
@@ -35,6 +34,24 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
+    // 🔥 LEER VARIABLES DEL .ENV DEL FRONT
+    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
+    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
+
+    // 🔥 VALIDAR ADMIN LOCAL
+    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
+      setUsuarioLogueado({
+        admin: true,
+        email: data.email,
+        rol: "admin",
+      });
+
+      Swal.fire("Admin OK", "Bienvenido al panel", "success");
+      navigate("/admin");
+      return; // 👈 IMPORTANTÍSIMO
+    }
+
+    // 🔥 LOGIN NORMAL (BACKEND)
     const r = await fetch(`${BASE_USERS}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,7 +65,6 @@ const LoginPage = ({ setUsuarioLogueado }) => {
       return;
     }
 
-    // GUARDAMOS SOLO LO NECESARIO
     setUsuarioLogueado({
       id: res.uid,
       nombre: res.nombre,
