@@ -42,6 +42,7 @@ export const crearCancionAPI = async (cancion) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "x-admin-front": usuarioLogueado?.rol === "admin" ? "true" : "false",
       },
       body: JSON.stringify(cancion),
     });
