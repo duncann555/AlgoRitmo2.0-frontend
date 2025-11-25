@@ -44,7 +44,7 @@ const Home = () => {
 
   const agregarAPlaylist = async (cancion) => {
     if (!usuarioId) {
-      Swal.fire("Login requerido", "Logueate para usar playlists", "info");
+      Swal.fire("¡Epa! Te falta el pase VIP", "Para armar tu propia colección de temazos, necesitás tu cuenta. ¡Entrá y empezá a sumar!", "info");
       navigate("/login");
       return;
     }
