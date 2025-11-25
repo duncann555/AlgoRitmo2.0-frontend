@@ -61,7 +61,12 @@ const LoginPage = ({ setUsuarioLogueado }) => {
         return;
       }
 
-      setUsuarioLogueado(res);
+      setUsuarioLogueado({
+        id: res.uid,
+        nombre: res.nombre,
+        email: res.email,
+        rol: res.rol,
+      });
       if (res.token) localStorage.setItem("token", res.token);
 
       Swal.fire("Login OK", `Hola ${res.nombre || res.email}`, "success");
@@ -72,34 +77,32 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarRegistro = async (data) => {
-  try {
-    const r = await fetch(`${BASE_USERS}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nombre: data.nombre,
-        email: data.email,
-        password: data.password,
-        confirmarPassword: data.confirmarPassword, 
-      }),
-    });
+    try {
+      const r = await fetch(`${BASE_USERS}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: data.nombre,
+          email: data.email,
+          password: data.password,
+          confirmarPassword: data.confirmarPassword,
+        }),
+      });
 
-    const res = await r.json();
+      const res = await r.json();
 
-    if (!r.ok) {
-      Swal.fire("Error", res.mensaje || "Error al registrar", "error");
-      return;
+      if (!r.ok) {
+        Swal.fire("Error", res.mensaje || "Error al registrar", "error");
+        return;
+      }
+
+      Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
+      setModo("login");
+      reset({ email: data.email, password: "" });
+    } catch (e) {
+      Swal.fire("Error", "Ocurrió un error en el registro", "error");
     }
-
-    Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
-    setModo("login");
-    reset({ email: data.email, password: "" });
-  } catch (e) {
-    Swal.fire("Error", "Ocurrió un error en el registro", "error");
-  }
-};
-
-
+  };
 
   return (
     <Modal
