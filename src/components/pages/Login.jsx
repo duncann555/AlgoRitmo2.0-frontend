@@ -80,7 +80,7 @@ const LoginPage = ({ setUsuarioLogueado }) => {
         nombre: data.nombre,
         email: data.email,
         password: data.password,
-        confirmarPassword: data.confirmarPassword,
+        confirmarPassword: data.confirmarPassword, 
       }),
     });
 
@@ -94,11 +94,11 @@ const LoginPage = ({ setUsuarioLogueado }) => {
     Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
     setModo("login");
     reset({ email: data.email, password: "" });
-
   } catch (e) {
     Swal.fire("Error", "Ocurrió un error en el registro", "error");
   }
 };
+
 
 
   return (
