@@ -222,11 +222,13 @@ const FormularioAdmin = () => {
               type="text"
               placeholder="https://ejemplo.com/imagen.jpg"
               {...register("imagen", {
+                required: "La imagen es obligatoria",
                 pattern: {
-                  value: /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/,
-                  message: "Debe ser una URL válida (http/https)",
+                  value: /^https?:\/\/.*\.(jpg|jpeg|png)$/i,
+                  message: "Debe ser un enlace a una imagen JPG o PNG",
                 },
               })}
+              isInvalid={!!errors.imagen}
             />
             <Form.Control.Feedback
               type="invalid"
