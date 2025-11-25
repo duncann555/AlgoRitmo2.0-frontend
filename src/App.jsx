@@ -18,10 +18,13 @@ import MiPlaylist from "./components/pages/MiPlaylist";
 import Nosotros from "./components/pages/Nosotros";
 
 export default function App() {
-
   const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
-    const user = sessionStorage.getItem("usuarioKey");
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = sessionStorage.getItem("usuarioKey");
+      return user ? JSON.parse(user) : null;
+    } catch {
+      return null;
+    }
   });
 
   useEffect(() => {
@@ -34,7 +37,10 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Menu usuarioLogueado={usuarioLogueado} setUsuarioLogueado={setUsuarioLogueado} />
+      <Menu
+        usuarioLogueado={usuarioLogueado}
+        setUsuarioLogueado={setUsuarioLogueado}
+      />
 
       <main className="mb-4">
         <Container>

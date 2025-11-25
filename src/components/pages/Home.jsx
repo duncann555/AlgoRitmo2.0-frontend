@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Row, Col, Button, Card, Form } from "react-bootstrap";
 import "../../styles/home.css";
-import PlaylistSidebar from "../pages/PlayLists.jsx"; 
+import PlaylistSidebar from "../pages/PlayLists.jsx";
 import { FaMusic, FaPlus, FaCheck } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-import { 
-  listarCanciones, 
-  obtenerPlaylist, 
-  agregarAplaylistAPI, 
-  borrarDePlaylistAPI 
+import {
+  listarCanciones,
+  obtenerPlaylist,
+  agregarAplaylistAPI,
+  borrarDePlaylistAPI,
 } from "../../helpers/queries";
 
 const ITEMS_POR_VISTA = 6;
@@ -22,17 +22,23 @@ const Home = () => {
   const [indicePlaylist, setIndicePlaylist] = useState(0);
 
   const navigate = useNavigate();
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioKey")) || false;
 
+  const usuario = (() => {
+    try {
+      const raw = sessionStorage.getItem("usuarioKey");
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  })();
 
-
-  const usuarioId = usuario ? (
-    usuario.id ||           
-    usuario._id ||          
-    usuario.uid ||          
-    usuario.usuario?._id || 
-    usuario.usuario?.id
-  ) : null;
+  const usuarioId = usuario
+    ? usuario.id ||
+      usuario._id ||
+      usuario.uid ||
+      usuario.usuario?._id ||
+      usuario.usuario?.id
+    : null;
 
   useEffect(() => {
     const cargar = async () => {
@@ -52,50 +58,70 @@ const Home = () => {
   }, [usuarioId]);
 
   const agregarAPlaylist = async (cancion) => {
-  if (!usuarioId) {
-    Swal.fire(
-      "¡Epa! Te falta loguearte",
-      "Para armar tu propia colección de temas, necesitás tu cuenta. ¡Entrá y empezá a sumar!",
-      "info"
-    );
-    navigate("/login");
-    return;
-  }
-
-  try {
-    const cancionId = cancion._id || cancion.id;
-    const resp = await agregarAplaylistAPI(usuarioId, cancionId);
-
-    if (!resp || resp.ok === false) {
-      throw new Error("Error al agregar canción");
+    if (!usuarioId) {
+      Swal.fire(
+        "¡Epa! Te falta loguearte",
+        "Para armar tu propia colección de temas, necesitás tu cuenta. ¡Entrá y empezá a sumar!",
+        "info"
+      );
+      navigate("/login");
+      return;
     }
 
-    setPlaylist((prev) => {
-      const yaExiste = prev.some((p) => (p._id || p.id) === cancionId);
-      return yaExiste ? prev : [...prev, cancion];
-    });
-  } catch (e) {
-    Swal.fire("Error", "No se pudo agregar la canción a tu playlist.", "error");
-  }
-};
+    try {
+      const cancionId = cancion._id || cancion.id;
+      const resp = await agregarAplaylistAPI(usuarioId, cancionId);
 
+      if (!resp || !resp.ok) {
+        throw new Error("Error al agregar canción");
+      }
+
+      setPlaylist((prev) => {
+        const yaExiste = prev.some((p) => (p._id || p.id) === cancionId);
+        return yaExiste ? prev : [...prev, cancion];
+      });
+    } catch (e) {
+      console.error(e);
+      Swal.fire(
+        "Error",
+        "No se pudo agregar la canción a tu playlist.",
+        "error"
+      );
+    }
+  };
 
   const quitarDePlaylist = async (idCancion) => {
     if (!usuarioId) return;
 
-    await borrarDePlaylistAPI(usuarioId, idCancion);
-    
-    setPlaylist((prev) => prev.filter((p) => (p._id || p.id) !== idCancion));
+    try {
+      const resp = await borrarDePlaylistAPI(usuarioId, idCancion);
+      if (!resp || !resp.ok) {
+        throw new Error("Error al borrar canción de la playlist");
+      }
+
+      setPlaylist((prev) =>
+        prev.filter((p) => (p._id || p.id) !== idCancion)
+      );
+    } catch (e) {
+      console.error(e);
+      Swal.fire(
+        "Error",
+        "No se pudo quitar la canción de tu playlist.",
+        "error"
+      );
+    }
   };
 
-  // Lógica del Carrusel (Sin cambios, solo funciona visualmente)
   const playlistVisible = () => {
     const total = playlist.length;
     if (total <= ITEMS_POR_VISTA) return playlist;
     const fin = indicePlaylist + ITEMS_POR_VISTA;
     if (fin <= total) return playlist.slice(indicePlaylist, fin);
     const sobrante = fin - total;
-    return [...playlist.slice(indicePlaylist, total), ...playlist.slice(0, sobrante)];
+    return [
+      ...playlist.slice(indicePlaylist, total),
+      ...playlist.slice(0, sobrante),
+    ];
   };
 
   const siguientePlaylist = () => {
@@ -105,7 +131,9 @@ const Home = () => {
 
   const anteriorPlaylist = () => {
     if (playlist.length === 0) return;
-    setIndicePlaylist((prev) => (prev - 1 < 0 ? playlist.length - 1 : prev - 1));
+    setIndicePlaylist((prev) =>
+      prev - 1 < 0 ? playlist.length - 1 : prev - 1
+    );
   };
 
   const cancionesFiltradas = todasLasCanciones.filter((cancion) => {
@@ -116,6 +144,9 @@ const Home = () => {
       cancion.categoria.toLowerCase().includes(texto)
     );
   });
+
+  const cancionesParaMostrar =
+    busqueda.trim() !== "" ? cancionesFiltradas : todasLasCanciones;
 
   return (
     <Row className="g-4 mt-3">
@@ -166,22 +197,29 @@ const Home = () => {
 
           {playlist.length > 0 && (
             <>
-              <Button onClick={anteriorPlaylist} className="btn-playlist-nav-circle btn-playlist-left">
+              <Button
+                onClick={anteriorPlaylist}
+                className="btn-playlist-nav-circle btn-playlist-left"
+              >
                 <i className="bi bi-chevron-left" />
               </Button>
 
-              <Button onClick={siguientePlaylist} className="btn-playlist-nav-circle btn-playlist-right">
+              <Button
+                onClick={siguientePlaylist}
+                className="btn-playlist-nav-circle btn-playlist-right"
+              >
                 <i className="bi bi-chevron-right" />
               </Button>
 
               <div className="mt-4">
-                <h3 className="playlist-subtitle mb-2">Tu playlist favorita</h3>
+                <h3 className="playlist-subtitle mb-2">
+                  Tu playlist favorita
+                </h3>
 
                 <div className="playlist-banner-container mt-2 pb-5">
                   {playlistVisible().map((cancion) => {
-                     // ID seguro para el banner
-                     const id = cancion._id || cancion.id;
-                     return (
+                    const id = cancion._id || cancion.id;
+                    return (
                       <div key={id} className="playlist-mini-card">
                         <div
                           className="playlist-mini-main"
@@ -224,62 +262,60 @@ const Home = () => {
           <h3 className="mb-3 text-white">Canciones</h3>
 
           <Row className="gy-4">
-            {(busqueda.trim() !== "" ? cancionesFiltradas : todasLasCanciones)
-              .map((cancion) => {
-                // ID seguro para el grid
-                const id = cancion._id || cancion.id;
-                
-                // 👇 Lógica BLINDADA para saber si ya está en la playlist
-                const estaEnPlaylist = playlist.some(
-                    (p) => (p._id || p.id) === id
-                );
+            {cancionesParaMostrar.map((cancion) => {
+              const id = cancion._id || cancion.id;
 
-                return (
-                  <Col key={id} xs={12} sm={6} md={4} lg={3}>
-                    <Card className="h-100 rounded-4 overflow-hidden cardSpotify">
-                      <div className="card-img-wrapper">
-                        <Card.Img
-                          variant="top"
-                          src={cancion.imagen || "/defecto.png"}
-                          className="cardImg"
-                        />
-                        <Link
-                          to={`/detalles/${id}`}
-                          className="play-btn-overlay"
-                        >
-                          <i className="bi bi-play-circle-fill play-btn" />
-                        </Link>
-                      </div>
+              const estaEnPlaylist = playlist.some(
+                (p) => (p._id || p.id) === id
+              );
 
-                      <Card.Body className="text-center">
-                        <Card.Title>{cancion.artista}</Card.Title>
-                        <Card.Text>{cancion.nombre}</Card.Text>
+              return (
+                <Col key={id} xs={12} sm={6} md={4} lg={3}>
+                  <Card className="h-100 rounded-4 overflow-hidden cardSpotify">
+                    <div className="card-img-wrapper">
+                      <Card.Img
+                        variant="top"
+                        src={cancion.imagen || "/defecto.png"}
+                        className="cardImg"
+                      />
+                      <Link
+                        to={`/detalles/${id}`}
+                        className="play-btn-overlay"
+                      >
+                        <i className="bi bi-play-circle-fill play-btn" />
+                      </Link>
+                    </div>
 
-                        <Button
-                          className={`mt-2 ${
-                            estaEnPlaylist ? "btn-agregar-playlist" : "btn-gradient"
-                          }`}
-                          onClick={() => agregarAPlaylist(cancion)}
-                          // Deshabilitamos si ya está, para evitar doble click
-                          disabled={estaEnPlaylist} 
-                        >
-                          {estaEnPlaylist ? (
-                            <>
-                              <FaCheck className="me-2 icono-check" />
-                              Agregada
-                            </>
-                          ) : (
-                            <>
-                              <FaPlus className="me-2 fs-5" />
-                              Agregar
-                            </>
-                          )}
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                );
-              })}
+                    <Card.Body className="text-center">
+                      <Card.Title>{cancion.artista}</Card.Title>
+                      <Card.Text>{cancion.nombre}</Card.Text>
+
+                      <Button
+                        className={`mt-2 ${
+                          estaEnPlaylist
+                            ? "btn-agregar-playlist"
+                            : "btn-gradient"
+                        }`}
+                        onClick={() => agregarAPlaylist(cancion)}
+                        disabled={estaEnPlaylist}
+                      >
+                        {estaEnPlaylist ? (
+                          <>
+                            <FaCheck className="me-2 icono-check" />
+                            Agregada
+                          </>
+                        ) : (
+                          <>
+                            <FaPlus className="me-2 fs-5" />
+                            Agregar
+                          </>
+                        )}
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         </section>
       </Col>
@@ -288,3 +324,4 @@ const Home = () => {
 };
 
 export default Home;
+  

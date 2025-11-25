@@ -1,3 +1,4 @@
+// src/components/pages/Login.jsx
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { Google, Facebook } from "react-bootstrap-icons";
@@ -7,11 +8,12 @@ import Swal from "sweetalert2";
 import "../../styles/login.css";
 
 const BASE_USERS = import.meta.env.VITE_API_USUARIOS;
+const ADMIN_EMAIL = import.meta.env.VITE_API_EMAIL;
+const ADMIN_PASSWORD = import.meta.env.VITE_API_PASSWORD;
 
 const LoginPage = ({ setUsuarioLogueado }) => {
-
   const [show, setShow] = useState(true);
-  const [modo, setModo] = useState("login");
+  const [modo, setModo] = useState("login"); // "login" | "registro"
   const navigate = useNavigate();
 
   const {
@@ -30,16 +32,18 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const onSubmit = (formData) => {
-    if (modo === "login") manejarLogin(formData);
-    else manejarRegistro(formData);
+    if (modo === "login") {
+      manejarLogin(formData);
+    } else {
+      manejarRegistro(formData);
+    }
   };
 
   const manejarLogin = async (data) => {
-    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
-    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
-
-    // ADMIN LOCAL
-    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
+    // ======================
+    // 1) ADMIN LOCAL (SIN BACKEND)
+    // ======================
+    if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
       const userAdmin = {
         id: "admin_panel",
         nombre: "Administrador",
@@ -48,41 +52,63 @@ const LoginPage = ({ setUsuarioLogueado }) => {
         admin: true,
       };
 
+      // Limpio token por las dudas (este admin no usa JWT)
+      localStorage.removeItem("token");
+
       sessionStorage.setItem("usuarioKey", JSON.stringify(userAdmin));
       setUsuarioLogueado(userAdmin);
 
       Swal.fire("Admin OK", "Bienvenido al panel", "success");
+      setShow(false);
       navigate("/admin");
       return;
     }
 
-    // LOGIN NORMAL (SIN TOKEN)
-    const r = await fetch(`${BASE_USERS}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: data.email, password: data.password }),
-    });
+    // ======================
+    // 2) LOGIN NORMAL (CON BACKEND + JWT)
+    // ======================
+    try {
+      const r = await fetch(`${BASE_USERS}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
 
-    const res = await r.json();
+      const res = await r.json();
 
-    if (!r.ok) {
-      Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
-      return;
+      if (!r.ok) {
+        Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
+        return;
+      }
+
+      // Guardamos el token del backend
+      if (res.token) {
+        localStorage.setItem("token", res.token);
+      } else {
+        localStorage.removeItem("token");
+      }
+
+      const usuario = {
+        id: res.uid || res.id,
+        nombre: res.nombre,
+        email: res.email,
+        rol: res.rol,
+        admin: res.rol === "admin",
+      };
+
+      sessionStorage.setItem("usuarioKey", JSON.stringify(usuario));
+      setUsuarioLogueado(usuario);
+
+      Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
+      setShow(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Error en login:", error);
+      Swal.fire("Error", "No se pudo iniciar sesión", "error");
     }
-
-    const usuario = {
-      id: res.uid || res.id,
-      nombre: res.nombre,
-      email: res.email,
-      rol: res.rol,
-      admin: res.rol === "admin",
-    };
-
-    sessionStorage.setItem("usuarioKey", JSON.stringify(usuario));
-    setUsuarioLogueado(usuario);
-
-    Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
-    navigate("/");
   };
 
   const manejarRegistro = async (data) => {
@@ -106,10 +132,12 @@ const LoginPage = ({ setUsuarioLogueado }) => {
       }
 
       Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
-      setModo("login");
-      reset({ email: data.email, password: "" });
 
+      // Paso a modo login y dejo precargado el mail
+      setModo("login");
+      reset({ email: data.email, password: "", confirmarPassword: "" });
     } catch (e) {
+      console.error("Error en registro:", e);
       Swal.fire("Error", "Ocurrió un error en el registro", "error");
     }
   };
@@ -130,7 +158,6 @@ const LoginPage = ({ setUsuarioLogueado }) => {
 
       <Modal.Body className="login-body">
         <Form onSubmit={handleSubmit(onSubmit)} className="form-container">
-
           {modo === "registro" && (
             <Form.Group className="mb-3">
               <Form.Label>Nombre</Form.Label>
@@ -209,7 +236,12 @@ const LoginPage = ({ setUsuarioLogueado }) => {
                 className="btn btn-link p-0"
                 onClick={() => {
                   setModo("registro");
-                  reset();
+                  reset({
+                    nombre: "",
+                    email: "",
+                    password: "",
+                    confirmarPassword: "",
+                  });
                 }}
               >
                 <span className="AlgoRitmo">Crear una cuenta</span>
@@ -222,7 +254,12 @@ const LoginPage = ({ setUsuarioLogueado }) => {
                 className="btn btn-link p-0"
                 onClick={() => {
                   setModo("login");
-                  reset();
+                  reset({
+                    email: "",
+                    password: "",
+                    confirmarPassword: "",
+                    nombre: "",
+                  });
                 }}
               >
                 <span className="AlgoRitmo">Iniciar sesión</span>

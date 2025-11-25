@@ -23,7 +23,7 @@ function Administrador() {
     if (!palabraBuscador) return true;
 
     const textoBusqueda = palabraBuscador.toLowerCase();
-    const codigoBusqueda = parseInt(palabraBuscador);
+    const codigoBusqueda = parseInt(palabraBuscador, 10);
 
     return (
       cancion.nombre.toLowerCase().includes(textoBusqueda) ||
@@ -48,26 +48,26 @@ function Administrador() {
       },
     });
 
-    if (result.isConfirmed) {
-      const respuesta = await borrarCancionAPI(idCancion);
+    if (!result.isConfirmed) return;
 
-      if (respuesta && respuesta.ok) {
-        setCanciones((prev) =>
-          prev.filter((c) => (c.id || c._id) !== idCancion)
-        );
+    const respuesta = await borrarCancionAPI(idCancion);
 
-        Swal.fire({
-          title: "Eliminada",
-          text: "La canción fue eliminada correctamente",
-          icon: "success",
-          customClass: {
-            popup: "swal-popup-custom",
-            confirmButton: "btn-swal-confirm",
-          },
-        });
-      } else {
-        Swal.fire("Error", "No se pudo eliminar la canción", "error");
-      }
+    if (respuesta && respuesta.ok) {
+      setCanciones((prev) =>
+        prev.filter((c) => (c.id || c._id) !== idCancion)
+      );
+
+      Swal.fire({
+        title: "Eliminada",
+        text: "La canción fue eliminada correctamente",
+        icon: "success",
+        customClass: {
+          popup: "swal-popup-custom",
+          confirmButton: "btn-swal-confirm",
+        },
+      });
+    } else {
+      Swal.fire("Error", "No se pudo eliminar la canción", "error");
     }
   };
 

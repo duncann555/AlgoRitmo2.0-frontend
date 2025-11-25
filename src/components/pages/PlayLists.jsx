@@ -12,9 +12,6 @@ const Playlist = ({ playlist = [], onRemove }) => {
       ) : (
         <ul className="playlist-list">
           {playlist.map((song) => {
-            // ⚠️ FIX IMPORTANTE:
-            // Definimos el ID acá para no repetir lógica.
-            // MongoDB usa '_id', pero por si acaso miramos 'id' también.
             const songId = song._id || song.id;
 
             return (
@@ -35,7 +32,6 @@ const Playlist = ({ playlist = [], onRemove }) => {
                     variant="outline-light"
                     size="sm"
                     className="btn-remove-pill playlist-remove-btn"
-                    // Usamos la variable songId que calculamos arriba
                     onClick={() => onRemove(songId)}
                   >
                     <i className="bi bi-x-lg"></i>

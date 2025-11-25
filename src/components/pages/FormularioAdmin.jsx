@@ -18,7 +18,6 @@ const FormularioAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Detectamos si estamos editando
   const editar = location.state?.cancion !== undefined;
 
   useEffect(() => {
@@ -34,7 +33,7 @@ const FormularioAdmin = () => {
     } else {
       reset();
     }
-  }, [editar]);
+  }, [editar, location.state, reset, setValue]);
 
   const onSubmit = async (data) => {
     const objetoCancion = {
@@ -43,7 +42,7 @@ const FormularioAdmin = () => {
       categoria: data.categoria,
       album: data.album,
       anio: data.anio,
-      imagen: data.imagen,   // ← SIN DEFAULT. OBLIGATORIA.
+      imagen: data.imagen,
       duracion: data.duracion,
     };
 
@@ -53,7 +52,6 @@ const FormularioAdmin = () => {
       if (editar) {
         const cancion = location.state.cancion;
         const idCancion = cancion._id || cancion.id;
-
         respuesta = await editarCancionAPI(idCancion, objetoCancion);
       } else {
         respuesta = await crearCancionAPI(objetoCancion);
@@ -103,7 +101,7 @@ const FormularioAdmin = () => {
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese nombre de la cancion"
+              placeholder="Ingrese nombre de la canción"
               {...register("nombre", {
                 required: "El nombre es obligatorio",
                 minLength: { value: 3, message: "Mínimo 3 caracteres" },
@@ -162,12 +160,12 @@ const FormularioAdmin = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* ALBUM */}
+          {/* ÁLBUM */}
           <Form.Group className="mb-3">
             <Form.Label>Álbum</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese nombre del album"
+              placeholder="Ingrese nombre del álbum"
               {...register("album", {
                 required: "El álbum es obligatorio",
                 minLength: { value: 2, message: "Mínimo 2 caracteres" },
@@ -210,19 +208,21 @@ const FormularioAdmin = () => {
               {...register("imagen", {
                 required: "La imagen es obligatoria",
                 pattern: {
-                  value: /^https?:\/\/.*\.(jpg|jpeg|png)$/i,
-                  message: "Debe ser una imagen JPG o PNG válida",
+                  value: /^https?:\/\/.*\.(jpg|jpeg|png|webp)$/i,
+                  message: "Debe ser una imagen JPG, JPEG, PNG o WEBP válida",
                 },
               })}
               isInvalid={!!errors.imagen}
             />
-
-            <Form.Control.Feedback type="invalid" className="d-block text-danger">
+            <Form.Control.Feedback
+              type="invalid"
+              className="d-block text-danger"
+            >
               {errors.imagen?.message}
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* DURACION */}
+          {/* DURACIÓN */}
           <Form.Group className="mb-3">
             <Form.Label>Duración (mm:ss)</Form.Label>
             <Form.Control
