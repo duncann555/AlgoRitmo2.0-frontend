@@ -31,10 +31,8 @@ const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
               Nosotros
             </NavLink>
 
-            {/* 👇 ACÁ ESTÁ EL CAMBIO CLAVE 👇 */}
             {usuarioLogueado ? (
               <>
-                {/* Si es ADMIN muestra esto */}
                 {usuarioLogueado.rol === 'admin' ? (
                   <NavLink end to="/admin" className="nav-link nav-link-custom">
                     Administrador
