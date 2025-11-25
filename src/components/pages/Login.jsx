@@ -35,45 +35,31 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
-    // 1) Accedé a las variables de entorno correctamente usando import.meta.env
-    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
-    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
+    const r = await fetch(`${BASE_USERS}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: data.email, password: data.password }),
+    });
 
-    // 2) Usá esas variables para comparar
-    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
-      setUsuarioLogueado({ admin: true, email: data.email, rol: "admin" });
-      Swal.fire("Admin OK", "Bienvenido al panel", "success");
-      navigate("/admin");
+    const res = await r.json();
+
+    if (!r.ok) {
+      Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
       return;
     }
 
-    // USUARIO NORMAL
-    try {
-      const r = await fetch(`${BASE_USERS}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
-      const res = await r.json();
+    // GUARDAMOS SOLO LO NECESARIO
+    setUsuarioLogueado({
+      id: res.uid,
+      nombre: res.nombre,
+      email: res.email,
+      rol: res.rol,
+    });
 
-      if (!r.ok) {
-        Swal.fire("Error", res.mensaje || "Error de credenciales", "error");
-        return;
-      }
+    if (res.token) localStorage.setItem("token", res.token);
 
-      setUsuarioLogueado({
-        id: res.uid,
-        nombre: res.nombre,
-        email: res.email,
-        rol: res.rol,
-      });
-      if (res.token) localStorage.setItem("token", res.token);
-
-      Swal.fire("Login OK", `Hola ${res.nombre || res.email}`, "success");
-      navigate("/"); // O handleClose()
-    } catch (e) {
-      Swal.fire("Error", "No se pudo conectar al servidor", "error");
-    }
+    Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
+    navigate("/");
   };
 
   const manejarRegistro = async (data) => {
