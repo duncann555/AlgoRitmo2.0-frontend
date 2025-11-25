@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../styles/login.css";
 
-// ⚠️ AJUSTE TÁCTICO: Usá la variable de entorno o el puerto 4000 que configuramos
-const BASE_USERS = import.meta.env.VITE_API_USUARIOS || "http://localhost:4000/api/usuarios";
+const BASE_USERS = import.meta.env.VITE_API_USUARIOS
 
 const LoginPage = ({ setUsuarioLogueado }) => {
   const [show, setShow] = useState(true);

@@ -23,7 +23,16 @@ const Home = () => {
 
   const navigate = useNavigate();
   const usuario = JSON.parse(sessionStorage.getItem("usuarioKey")) || false;
-  const usuarioId = usuario ? (usuario.id || usuario._id || usuario.uid) : null;
+
+
+
+  const usuarioId = usuario ? (
+    usuario.id ||           
+    usuario._id ||          
+    usuario.uid ||          
+    usuario.usuario?._id || 
+    usuario.usuario?.id
+  ) : null;
 
   useEffect(() => {
     const cargar = async () => {
