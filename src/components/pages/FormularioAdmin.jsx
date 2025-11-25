@@ -3,7 +3,6 @@ import { Button, Form } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import img from "../../img/1.png";
 import "../../styles/app.css";
 import { crearCancionAPI, editarCancionAPI } from "../../helpers/queries";
 
@@ -36,7 +35,7 @@ const FormularioAdmin = () => {
     }
   }, [editar]);
 
-  const imagenDefecto = img;
+  const imagenDefecto = "https://drive.google.com/uc?export=view&id=1RGYkIppypVEn_BGrF1qgp7MH0ZKRUApI";
 
   const onSubmit = async (data) => {
     const objetoCancion = {
@@ -112,9 +111,9 @@ const FormularioAdmin = () => {
                   message: "Debe tener al menos 3 caracteres",
                 },
                 maxLength: {
-                  value:40,
-                  message: "Debe tener maximo 40 caracteres"
-                }
+                  value: 40,
+                  message: "Debe tener maximo 40 caracteres",
+                },
               })}
               isInvalid={!!errors.nombre}
             />
@@ -135,9 +134,9 @@ const FormularioAdmin = () => {
                   message: "Debe tener al menos 3 caracteres",
                 },
                 maxLength: {
-                  value:40,
-                  message: "Debe tener maximo 40 caracteres"
-                }
+                  value: 40,
+                  message: "Debe tener maximo 40 caracteres",
+                },
               })}
               isInvalid={!!errors.artista}
             />
@@ -184,10 +183,10 @@ const FormularioAdmin = () => {
                   value: 2,
                   message: "Debe tener al menos 2 caracteres",
                 },
-                 maxLength: {
-                  value:20,
-                  message: "Debe tener maximo 20 caracteres"
-                }
+                maxLength: {
+                  value: 20,
+                  message: "Debe tener maximo 20 caracteres",
+                },
               })}
               isInvalid={!!errors.album}
             />
@@ -217,12 +216,23 @@ const FormularioAdmin = () => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Imagen URL*</Form.Label>
+            <Form.Label>Imagen URL</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ingrese URL de la Imagen Ej: https://ejemplo.com/imagen.jpg"
-              {...register("imagen")}
+              placeholder="https://ejemplo.com/imagen.jpg"
+              {...register("imagen", {
+                pattern: {
+                  value: /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/,
+                  message: "Debe ser una URL válida (http/https)",
+                },
+              })}
             />
+            <Form.Control.Feedback
+              type="invalid"
+              className="d-block text-danger"
+            >
+              {errors.imagen?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
