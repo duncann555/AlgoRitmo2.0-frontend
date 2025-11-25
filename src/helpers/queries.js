@@ -8,6 +8,18 @@ const URL_USUARIOS = import.meta.env.VITE_API_USUARIOS;
 // Token desde localStorage
 const obtenerToken = () => localStorage.getItem("token") || "";
 
+// Usuario decodificado del token
+import { jwtDecode } from "jwt-decode";
+const obtenerUsuario = () => {
+  const token = obtenerToken();
+  if (!token) return null;
+  try {
+    return jwtDecode(token);
+  } catch {
+    return null;
+  }
+};
+
 /* ========================
        CANCIONES
 ========================= */
@@ -16,8 +28,7 @@ export const listarCanciones = async () => {
   try {
     const respuesta = await fetch(URL_CANCIONES);
     if (!respuesta.ok) return [];
-    const data = await respuesta.json();
-    return Array.isArray(data) ? data : [];
+    return await respuesta.json();
   } catch {
     return [];
   }
@@ -36,13 +47,13 @@ export const obtenerCancionPorId = async (id) => {
 export const crearCancionAPI = async (cancion) => {
   try {
     const token = obtenerToken();
+    const usuario = obtenerUsuario();
 
     const respuesta = await fetch(URL_CANCIONES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "x-admin-front": usuarioLogueado?.rol === "admin" ? "true" : "false",
+        Authorization: token ? `Bearer ${token}` : "",
       },
       body: JSON.stringify(cancion),
     });
@@ -57,7 +68,7 @@ export const crearCancionAPI = async (cancion) => {
 
 export const editarCancionAPI = async (id, cancion) => {
   try {
-    return await fetch(`${URL_CANCIONES}/${id}`, {
+    const respuesta = await fetch(`${URL_CANCIONES}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -65,6 +76,8 @@ export const editarCancionAPI = async (id, cancion) => {
       },
       body: JSON.stringify(cancion),
     });
+
+    return await respuesta.json();
   } catch {
     return null;
   }
@@ -72,12 +85,14 @@ export const editarCancionAPI = async (id, cancion) => {
 
 export const borrarCancionAPI = async (id) => {
   try {
-    return await fetch(`${URL_CANCIONES}/${id}`, {
+    const respuesta = await fetch(`${URL_CANCIONES}/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${obtenerToken()}`,
       },
     });
+
+    return await respuesta.json();
   } catch {
     return null;
   }
@@ -99,10 +114,7 @@ export const obtenerPlaylist = async (userId) => {
 
     const data = await respuesta.json();
 
-    if (Array.isArray(data.canciones)) return data.canciones;
-    if (Array.isArray(data)) return data;
-
-    return [];
+    return Array.isArray(data.canciones) ? data.canciones : [];
   } catch {
     return [];
   }
@@ -113,7 +125,6 @@ export const agregarAplaylistAPI = async (userId, cancionId) => {
     return await fetch(`${URL_PLAYLIST}/${userId}/agregar/${cancionId}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${obtenerToken()}`,
       },
     });
