@@ -19,23 +19,43 @@ import MiPlaylist from "./components/pages/MiPlaylist";
 import Nosotros from "./components/pages/Nosotros";
 
 export default function App() {
-  // 1. ESTADO INICIAL: Verificación del token directa y limpia
-  const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
+  // App.jsx
 
-    try {
-      const datos = jwtDecode(token);
-      //console.log("🔍 Datos del Token:", datos);
-      const ahora = Date.now() / 1000;
-      // Si expiró devuelve null, si no, los datos
-      return datos.exp < ahora ? null : datos;
-    } catch {
+  const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
+  const token = localStorage.getItem("token");
+  const usuarioGuardado = sessionStorage.getItem("usuarioKey");
+
+  if (!token) return null;
+
+  try {
+    const datosToken = jwtDecode(token);
+    const ahora = Math.floor(Date.now() / 1000);
+
+    if (datosToken.exp < ahora) {
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("usuarioKey");
       return null;
     }
-  });
 
-  // 2. EFECTO: Sincroniza cambios de usuario (Logout/Login)
+    // Si ya tengo el usuario en sessionStorage, lo uso.
+    if (usuarioGuardado) {
+      return JSON.parse(usuarioGuardado);
+    }
+
+    // Fallback: saco lo básico del token
+    return {
+      uid: datosToken.uid,
+      nombre: datosToken.nombre,
+      rol: datosToken.rol,
+    };
+  } catch {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("usuarioKey");
+    return null;
+  }
+});
+
+
   useEffect(() => {
     if (!usuarioLogueado) {
       localStorage.removeItem("token");

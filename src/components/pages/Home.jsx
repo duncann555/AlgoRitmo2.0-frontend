@@ -52,21 +52,33 @@ const Home = () => {
   }, [usuarioId]);
 
   const agregarAPlaylist = async (cancion) => {
-    if (!usuarioId) {
-      Swal.fire("¡Epa! Te falta Loguearte", "Para armar tu propia colección de temas, necesitás tu cuenta. ¡Entrá y empezá a sumar!", "info");
-      navigate("/login");
-      return;
-    }
+  if (!usuarioId) {
+    Swal.fire(
+      "¡Epa! Te falta loguearte",
+      "Para armar tu propia colección de temas, necesitás tu cuenta. ¡Entrá y empezá a sumar!",
+      "info"
+    );
+    navigate("/login");
+    return;
+  }
 
+  try {
     const cancionId = cancion._id || cancion.id;
+    const resp = await agregarAplaylistAPI(usuarioId, cancionId);
 
-    await agregarAplaylistAPI(usuarioId, cancionId);
+    if (!resp || resp.ok === false) {
+      throw new Error("Error al agregar canción");
+    }
 
     setPlaylist((prev) => {
       const yaExiste = prev.some((p) => (p._id || p.id) === cancionId);
       return yaExiste ? prev : [...prev, cancion];
     });
-  };
+  } catch (e) {
+    Swal.fire("Error", "No se pudo agregar la canción a tu playlist.", "error");
+  }
+};
+
 
   const quitarDePlaylist = async (idCancion) => {
     if (!usuarioId) return;
