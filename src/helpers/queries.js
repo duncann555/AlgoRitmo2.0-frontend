@@ -15,9 +15,7 @@ const obtenerToken = () => localStorage.getItem("token") || "";
 export const listarCanciones = async () => {
   try {
     const respuesta = await fetch(URL_CANCIONES);
-
     if (!respuesta.ok) return [];
-
     const data = await respuesta.json();
     return Array.isArray(data) ? data : [];
   } catch {
@@ -37,13 +35,13 @@ export const obtenerCancionPorId = async (id) => {
 
 export const crearCancionAPI = async (cancion) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = obtenerToken();
 
-    const respuesta = await fetch(import.meta.env.VITE_API_CANCIONES, {
+    const respuesta = await fetch(URL_CANCIONES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 🔥 NECESARIO PARA ADMIN
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(cancion),
     });
