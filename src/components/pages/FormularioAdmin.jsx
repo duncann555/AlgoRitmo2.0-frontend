@@ -185,8 +185,8 @@ const FormularioAdmin = () => {
                   message: "Debe tener al menos 2 caracteres",
                 },
                 maxLength: {
-                  value: 20,
-                  message: "Debe tener maximo 20 caracteres",
+                  value: 40,
+                  message: "Debe tener maximo 40 caracteres",
                 },
               })}
               isInvalid={!!errors.album}

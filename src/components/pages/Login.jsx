@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../styles/login.css";
 
-const BASE_USERS = import.meta.env.VITE_API_USUARIOS
+const BASE_USERS = import.meta.env.VITE_API_USUARIOS;
 
 const LoginPage = ({ setUsuarioLogueado }) => {
   const [show, setShow] = useState(true);
@@ -35,13 +35,13 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
-  // 1) ¿Coincide con las variables de entorno del admin?
-  const esAdminEnv =
-    data.email === ADMIN_EMAIL && data.password === ADMIN_PASS;
+    // 1) Accedé a las variables de entorno correctamente usando import.meta.env
+    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
+    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
 
-    // ADMIN
-    if (data.email === emailAdmin && data.password === passAdmin) {
-      setUsuarioLogueado({ admin: true, email: data.email, rol: 'admin' });
+    // 2) Usá esas variables para comparar
+    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
+      setUsuarioLogueado({ admin: true, email: data.email, rol: "admin" });
       Swal.fire("Admin OK", "Bienvenido al panel", "success");
       navigate("/admin");
       return;
@@ -62,11 +62,10 @@ const LoginPage = ({ setUsuarioLogueado }) => {
       }
 
       setUsuarioLogueado(res);
-      if(res.token) localStorage.setItem("token", res.token);
-      
+      if (res.token) localStorage.setItem("token", res.token);
+
       Swal.fire("Login OK", `Hola ${res.nombre || res.email}`, "success");
       navigate("/"); // O handleClose()
-
     } catch (e) {
       Swal.fire("Error", "No se pudo conectar al servidor", "error");
     }
@@ -74,7 +73,8 @@ const LoginPage = ({ setUsuarioLogueado }) => {
 
   const manejarRegistro = async (data) => {
     try {
-      const r = await fetch(`${BASE_USERS}/register`, { // Asegurate que la ruta sea correcta en tu back
+      const r = await fetch(`${BASE_USERS}/register`, {
+        // Asegurate que la ruta sea correcta en tu back
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -99,7 +99,13 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered backdrop="static" className="login-modal">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      backdrop="static"
+      className="login-modal"
+    >
       <Modal.Header closeButton className="login-header">
         <Modal.Title>
           {modo === "login" ? "Iniciar Sesión" : "Crear cuenta"}
@@ -114,13 +120,15 @@ const LoginPage = ({ setUsuarioLogueado }) => {
               <Form.Control
                 type="text"
                 // 👇 VALIDACIONES DE NOMBRE AGREGADAS
-                {...register("nombre", { 
+                {...register("nombre", {
                   required: "El nombre es obligatorio",
                   minLength: { value: 3, message: "Mínimo 3 caracteres" },
-                  maxLength: { value: 30, message: "Máximo 30 caracteres" }
+                  maxLength: { value: 30, message: "Máximo 30 caracteres" },
                 })}
               />
-              <Form.Text className="text-danger">{errors.nombre?.message}</Form.Text>
+              <Form.Text className="text-danger">
+                {errors.nombre?.message}
+              </Form.Text>
             </Form.Group>
           )}
 
@@ -129,15 +137,17 @@ const LoginPage = ({ setUsuarioLogueado }) => {
             <Form.Control
               type="email"
               // 👇 VALIDACIÓN DE REGEX DE EMAIL AGREGADA
-              {...register("email", { 
+              {...register("email", {
                 required: "El correo es obligatorio",
                 pattern: {
                   value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-                  message: "Formato de correo inválido"
-                }
+                  message: "Formato de correo inválido",
+                },
               })}
             />
-            <Form.Text className="text-danger">{errors.email?.message}</Form.Text>
+            <Form.Text className="text-danger">
+              {errors.email?.message}
+            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -145,13 +155,15 @@ const LoginPage = ({ setUsuarioLogueado }) => {
             <Form.Control
               type="password"
               // 👇 VALIDACIONES DE PASSWORD AGREGADAS
-              {...register("password", { 
+              {...register("password", {
                 required: "La contraseña es obligatoria",
                 minLength: { value: 6, message: "Mínimo 6 caracteres" },
-                maxLength: { value: 20, message: "Máximo 20 caracteres" }
+                maxLength: { value: 20, message: "Máximo 20 caracteres" },
               })}
             />
-            <Form.Text className="text-danger">{errors.password?.message}</Form.Text>
+            <Form.Text className="text-danger">
+              {errors.password?.message}
+            </Form.Text>
           </Form.Group>
 
           {modo === "registro" && (
@@ -179,14 +191,26 @@ const LoginPage = ({ setUsuarioLogueado }) => {
           {modo === "login" ? (
             <small>
               ¿No tenés cuenta?{" "}
-              <button className="btn btn-link p-0" onClick={() => { setModo("registro"); reset(); }}>
+              <button
+                className="btn btn-link p-0"
+                onClick={() => {
+                  setModo("registro");
+                  reset();
+                }}
+              >
                 <span className="AlgoRitmo">Crear una cuenta</span>
               </button>
             </small>
           ) : (
             <small>
               ¿Ya tenés cuenta?{" "}
-              <button className="btn btn-link p-0" onClick={() => { setModo("login"); reset(); }}>
+              <button
+                className="btn btn-link p-0"
+                onClick={() => {
+                  setModo("login");
+                  reset();
+                }}
+              >
                 <span className="AlgoRitmo">Iniciar sesión</span>
               </button>
             </small>
