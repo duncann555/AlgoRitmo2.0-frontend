@@ -3,6 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import img from "../../img/1.png";
 import "../../styles/app.css";
 import { crearCancionAPI, editarCancionAPI } from "../../helpers/queries";
 
@@ -35,7 +36,7 @@ const FormularioAdmin = () => {
     }
   }, [editar]);
 
-  const imagenDefecto = "https://drive.google.com/uc?export=view&id=1RGYkIppypVEn_BGrF1qgp7MH0ZKRUApI";
+  const imagenDefecto = img;
 
   const onSubmit = async (data) => {
     const objetoCancion = {
