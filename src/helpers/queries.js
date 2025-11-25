@@ -37,16 +37,22 @@ export const obtenerCancionPorId = async (id) => {
 
 export const crearCancionAPI = async (cancion) => {
   try {
-    return await fetch(URL_CANCIONES, {
+    const token = localStorage.getItem("token");
+
+    const respuesta = await fetch(import.meta.env.VITE_API_CANCIONES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${obtenerToken()}`,
+        Authorization: `Bearer ${token}`, // 🔥 NECESARIO PARA ADMIN
       },
       body: JSON.stringify(cancion),
     });
-  } catch {
-    return null;
+
+    const data = await respuesta.json();
+    return { status: respuesta.status, data };
+  } catch (error) {
+    console.error("Error creando canción", error);
+    return { status: 500 };
   }
 };
 
@@ -105,16 +111,13 @@ export const obtenerPlaylist = async (userId) => {
 
 export const agregarAplaylistAPI = async (userId, cancionId) => {
   try {
-    return await fetch(
-      `${URL_PLAYLIST}/${userId}/agregar/${cancionId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${obtenerToken()}`,
-        },
-      }
-    );
+    return await fetch(`${URL_PLAYLIST}/${userId}/agregar/${cancionId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${obtenerToken()}`,
+      },
+    });
   } catch {
     return null;
   }
@@ -122,15 +125,12 @@ export const agregarAplaylistAPI = async (userId, cancionId) => {
 
 export const borrarDePlaylistAPI = async (userId, cancionId) => {
   try {
-    return await fetch(
-      `${URL_PLAYLIST}/${userId}/borrar/${cancionId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${obtenerToken()}`,
-        },
-      }
-    );
+    return await fetch(`${URL_PLAYLIST}/${userId}/borrar/${cancionId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${obtenerToken()}`,
+      },
+    });
   } catch {
     return null;
   }
