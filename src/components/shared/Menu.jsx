@@ -1,14 +1,13 @@
 import { Nav, Navbar, Container, Button } from "react-bootstrap";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../../styles/menu.css";
 
 const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
   const navegacion = useNavigate();
 
   const logout = () => {
-    // Borramos todo rastro
     localStorage.removeItem("token");
-    setUsuarioLogueado(null); // Usá null, no false, por coherencia
+    setUsuarioLogueado(null);
     navegacion("/");
   };
 
@@ -32,18 +31,20 @@ const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
               Nosotros
             </NavLink>
 
+            {/* 👇 ACÁ ESTÁ EL CAMBIO CLAVE 👇 */}
             {usuarioLogueado ? (
               <>
-                {/* CORRECCIÓN 2: Solo mostramos Admin si tiene el rol correcto */}
-                {usuarioLogueado.rol === 'admin' && (
+                {/* Si es ADMIN muestra esto */}
+                {usuarioLogueado.rol === 'admin' ? (
                   <NavLink end to="/admin" className="nav-link nav-link-custom">
                     Administrador
                   </NavLink>
+                ) : (
+                  // Si NO es admin (es usuario normal) muestra esto
+                  <NavLink end to="/playlist" className="nav-link nav-link-custom">
+                     Mi Música
+                  </NavLink>
                 )}
-                
-                <NavLink end to="/playlist" className="nav-link nav-link-custom">
-                   Mi Música
-                </NavLink>
 
                 <Button
                   variant="outline-light"
