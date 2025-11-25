@@ -34,49 +34,61 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
-    // 🔥 LEER VARIABLES DEL .ENV DEL FRONT
-    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
-    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
+  // 🔥 LEER VARIABLES DEL .ENV DEL FRONT
+  const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
+  const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
 
-    // 🔥 VALIDAR ADMIN LOCAL
-    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
-      setUsuarioLogueado({
-        admin: true,
-        email: data.email,
-        rol: "admin",
-      });
+  // 🔥 VALIDAR ADMIN LOCAL
+  if (data.email === adminEmailEnv && data.password === adminPassEnv) {
 
-      Swal.fire("Admin OK", "Bienvenido al panel", "success");
-      navigate("/admin");
-      return; // 👈 IMPORTANTÍSIMO
-    }
+    // 🔥 GUARDAR TOKEN FALSO PARA PASAR VALIDACIONES DEL BACK
+    const fakeToken = "token_admin_panel";
+    localStorage.setItem("token", fakeToken);
 
-    // 🔥 LOGIN NORMAL (BACKEND)
-    const r = await fetch(`${BASE_USERS}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: data.email, password: data.password }),
-    });
-
-    const res = await r.json();
-
-    if (!r.ok) {
-      Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
-      return;
-    }
-
+    // 🔥 GUARDAR USUARIO ADMIN COMPLETO
     setUsuarioLogueado({
-      id: res.uid,
-      nombre: res.nombre,
-      email: res.email,
-      rol: res.rol,
+      id: "admin_panel",
+      nombre: "Administrador",
+      email: data.email,
+      rol: "admin",
+      admin: true,   // 🔥 ESTO ES LO QUE HABILITA EL PANEL
     });
 
-    if (res.token) localStorage.setItem("token", res.token);
+    Swal.fire("Admin OK", "Bienvenido al panel", "success");
+    navigate("/admin");
+    return;
+  }
 
-    Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
-    navigate("/");
-  };
+  // 🔥 LOGIN NORMAL CONTRA EL BACKEND
+  const r = await fetch(`${BASE_USERS}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: data.email, password: data.password }),
+  });
+
+  const res = await r.json();
+
+  if (!r.ok) {
+    Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
+    return;
+  }
+
+  // 🔥 GUARDAR USUARIO NORMAL
+  setUsuarioLogueado({
+    id: res.uid,
+    nombre: res.nombre,
+    email: res.email,
+    rol: res.rol,
+    admin: res.rol === "admin",   // 🔥 Esto era lo que te faltaba
+  });
+
+  if (res.token) localStorage.setItem("token", res.token);
+
+  Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
+  navigate("/");
+};
+
+
 
   const manejarRegistro = async (data) => {
     try {
