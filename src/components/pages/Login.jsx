@@ -36,59 +36,47 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
-  // 🔥 LEER VARIABLES DEL .ENV DEL FRONT
-  const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
-  const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
-
-  // 🔥 VALIDAR ADMIN LOCAL
-  if (data.email === adminEmailEnv && data.password === adminPassEnv) {
-
-    // 🔥 GUARDAR TOKEN FALSO PARA PASAR VALIDACIONES DEL BACK
-    const fakeToken = "token_admin_panel";
-    localStorage.setItem("token", fakeToken);
-
-    // 🔥 GUARDAR USUARIO ADMIN COMPLETO
-    setUsuarioLogueado({
-      id: "admin_panel",
-      nombre: "Administrador",
-      email: data.email,
-      rol: "admin",
-      admin: true,   // 🔥 ESTO ES LO QUE HABILITA EL PANEL
+  try {
+    const r = await fetch(`${BASE_USERS}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: data.email, password: data.password }),
     });
 
-    Swal.fire("Admin OK", "Bienvenido al panel", "success");
-    navigate("/admin");
-    return;
+    const res = await r.json();
+
+    if (!r.ok) {
+      Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
+      return;
+    }
+
+    // ⬇️ leemos tus variables .env SOLO para marcar admin en el front
+    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
+    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
+
+    const esAdminFront =
+      data.email === adminEmailEnv && data.password === adminPassEnv;
+
+    // GUARDAMOS LO QUE DEVUELVE EL BACKEND
+    setUsuarioLogueado({
+      id: res.uid,
+      nombre: res.nombre,
+      email: res.email,
+      rol: res.rol,             // viene "admin" desde la BD
+      esAdminFront,             // opcional, si lo querés
+    });
+
+    if (res.token) {
+      localStorage.setItem("token", res.token);    // 🔥 AHORA SÍ TENÉS TOKEN
+    }
+
+    Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
+    navigate("/");
+  } catch (e) {
+    Swal.fire("Error", "No se pudo conectar al servidor", "error");
   }
-
-  // 🔥 LOGIN NORMAL CONTRA EL BACKEND
-  const r = await fetch(`${BASE_USERS}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: data.email, password: data.password }),
-  });
-
-  const res = await r.json();
-
-  if (!r.ok) {
-    Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
-    return;
-  }
-
-  // 🔥 GUARDAR USUARIO NORMAL
-  setUsuarioLogueado({
-    id: res.uid,
-    nombre: res.nombre,
-    email: res.email,
-    rol: res.rol,
-    admin: res.rol === "admin",   // 🔥 Esto era lo que te faltaba
-  });
-
-  if (res.token) localStorage.setItem("token", res.token);
-
-  Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
-  navigate("/");
 };
+
 
 
 
