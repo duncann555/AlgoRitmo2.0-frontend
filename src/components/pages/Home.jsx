@@ -6,7 +6,6 @@ import PlaylistSidebar from "../pages/PlayLists.jsx";
 import { FaMusic, FaPlus, FaCheck } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-// 👇 CAMBIO 1: Importamos todo desde helpers/queries
 import { 
   listarCanciones, 
   obtenerPlaylist, 
@@ -23,61 +22,48 @@ const Home = () => {
   const [indicePlaylist, setIndicePlaylist] = useState(0);
 
   const navigate = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("usuarioKey")) || false;
-  // Normalizamos el ID del usuario por si viene como _id
-  const userId = user ? (user.id || user._id || user.uid) : null;
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioKey")) || false;
+  const usuarioId = usuario ? (usuario.id || usuario._id || usuario.uid) : null;
 
-  // --- CARGAR CANCIONES ---
   useEffect(() => {
     const cargar = async () => {
-      // 👇 CAMBIO 2: Usamos listarCanciones
       const lista = await listarCanciones();
       setTodasLasCanciones(lista || []);
     };
     cargar();
   }, []);
 
-  // --- CARGAR PLAYLIST ---
   useEffect(() => {
     const cargarPlaylist = async () => {
-      if (!userId) return setPlaylist([]);
-      // 👇 CAMBIO 3: Usamos obtenerPlaylist
-      const pl = await obtenerPlaylist(userId);
+      if (!usuarioId) return setPlaylist([]);
+      const pl = await obtenerPlaylist(usuarioId);
       setPlaylist(pl || []);
     };
     cargarPlaylist();
-  }, [userId]); // Agregué userId como dependencia
+  }, [usuarioId]);
 
-  // --- AGREGAR A PLAYLIST ---
-  const agregarAPlaylist = async (song) => {
-    if (!userId) {
+  const agregarAPlaylist = async (cancion) => {
+    if (!usuarioId) {
       Swal.fire("Login requerido", "Logueate para usar playlists", "info");
       navigate("/login");
       return;
     }
 
-    // Normalizamos ID de la canción
-    const songId = song._id || song.id;
+    const cancionId = cancion._id || cancion.id;
 
-    // 👇 CAMBIO 4: Llamada a la API nueva
-    await agregarAplaylistAPI(userId, songId);
+    await agregarAplaylistAPI(usuarioId, cancionId);
 
-    // Actualizamos estado local
     setPlaylist((prev) => {
-      // Chequeamos IDs normalizados para no duplicar
-      const yaExiste = prev.some((p) => (p._id || p.id) === songId);
-      return yaExiste ? prev : [...prev, song];
+      const yaExiste = prev.some((p) => (p._id || p.id) === cancionId);
+      return yaExiste ? prev : [...prev, cancion];
     });
   };
 
-  // --- QUITAR DE PLAYLIST ---
   const quitarDePlaylist = async (idCancion) => {
-    if (!userId) return;
+    if (!usuarioId) return;
 
-    // 👇 CAMBIO 5: Llamada a la API nueva
-    await borrarDePlaylistAPI(userId, idCancion);
+    await borrarDePlaylistAPI(usuarioId, idCancion);
     
-    // Filtramos usando IDs normalizados
     setPlaylist((prev) => prev.filter((p) => (p._id || p.id) !== idCancion));
   };
 

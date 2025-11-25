@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import img from "../../img/1.png";
 import "../../styles/app.css";
-// 👇 CAMBIO 1: Importamos las funciones nuevas (fijate las mayúsculas en API)
 import { crearCancionAPI, editarCancionAPI } from "../../helpers/queries";
 
 const FormularioAdmin = () => {
@@ -20,7 +19,6 @@ const FormularioAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Verificamos si hay estado para saber si estamos editando
   const editar = location.state?.cancion !== undefined;
 
   useEffect(() => {
@@ -41,7 +39,7 @@ const FormularioAdmin = () => {
   const imagenDefecto = img;
 
   const onSubmit = async (data) => {
-    const songFront = {
+    const objetoCancion = {
       nombre: data.nombre,
       artista: data.artista,
       categoria: data.categoria,
@@ -55,22 +53,18 @@ const FormularioAdmin = () => {
       let respuesta;
 
       if (editar) {
-        // 👇 CAMBIO 2: Blindaje del ID (_id vs id)
         const cancion = location.state.cancion;
         const idCancion = cancion._id || cancion.id;
-        
-        respuesta = await editarCancionAPI(idCancion, songFront);
+
+        respuesta = await editarCancionAPI(idCancion, objetoCancion);
       } else {
-        respuesta = await crearCancionAPI(songFront);
+        respuesta = await crearCancionAPI(objetoCancion);
       }
 
-      // 👇 CAMBIO 3: Validación de respuesta HTTP
-      // Como queries.js devuelve el objeto Response, chequeamos .status o .ok
       if (respuesta && respuesta.status >= 200 && respuesta.status < 300) {
-        
         Swal.fire({
           title: editar ? "Cambios guardados" : "Canción creada",
-          text: `La canción "${songFront.nombre}" fue procesada con éxito`,
+          text: `La canción "${objetoCancion.nombre}" fue procesada con éxito`,
           icon: "success",
           confirmButtonText: "OK",
           customClass: {
@@ -78,15 +72,12 @@ const FormularioAdmin = () => {
             confirmButton: "btn-swal-confirm",
           },
         }).then(() => {
-          if (!editar) reset(); // Limpiamos solo si creamos
+          if (!editar) reset();
           navigate("/admin");
         });
-
       } else {
-        // Si el backend tiró un error (ej: 400, 500)
         throw new Error("No se pudo procesar la solicitud en el servidor.");
       }
-
     } catch (e) {
       console.error(e);
       Swal.fire("Error", "Ocurrió un problema, intente más tarde.", "error");
@@ -97,7 +88,11 @@ const FormularioAdmin = () => {
     <div className="modal-overlay">
       <div className="modal-window">
         <Form className="form-flotante" onSubmit={handleSubmit(onSubmit)}>
-          <Button size="sm" className="btn-close-modal" onClick={() => navigate(-1)}>
+          <Button
+            size="sm"
+            className="btn-close-modal"
+            onClick={() => navigate(-1)}
+          >
             ✖
           </Button>
 
@@ -109,10 +104,17 @@ const FormularioAdmin = () => {
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Sweet Child O' Mine"
+              placeholder="Ingrese nombre de la cancion"
               {...register("nombre", {
                 required: "El nombre es obligatorio",
-                minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
+                minLength: {
+                  value: 3,
+                  message: "Debe tener al menos 3 caracteres",
+                },
+                maxLength: {
+                  value:40,
+                  message: "Debe tener maximo 40 caracteres"
+                }
               })}
               isInvalid={!!errors.nombre}
             />
@@ -125,10 +127,17 @@ const FormularioAdmin = () => {
             <Form.Label>Artista o Grupo</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Guns N' Roses"
+              placeholder="Ingrese nombre del artista o grupo"
               {...register("artista", {
                 required: "El artista es obligatorio",
-                minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
+                minLength: {
+                  value: 3,
+                  message: "Debe tener al menos 3 caracteres",
+                },
+                maxLength: {
+                  value:40,
+                  message: "Debe tener maximo 40 caracteres"
+                }
               })}
               isInvalid={!!errors.artista}
             />
@@ -140,13 +149,15 @@ const FormularioAdmin = () => {
           <Form.Group className="mb-3">
             <Form.Label>Categoría</Form.Label>
             <Form.Select
-              {...register("categoria", { required: "La categoría es obligatoria" })}
+              {...register("categoria", {
+                required: "La categoría es obligatoria",
+              })}
               isInvalid={!!errors.categoria}
             >
               <option value="">Seleccione una opción</option>
               <option value="Pop">Pop</option>
               <option value="Rock">Rock</option>
-              <option value="Urbano">Urbano</option>
+              <option value="Cuarteto">Cuarteto</option>
               <option value="Balada">Balada</option>
               <option value="Cumbia">Cumbia</option>
               <option value="Electrónica">Electrónica</option>
@@ -154,8 +165,8 @@ const FormularioAdmin = () => {
               <option value="Tango">Tango</option>
               <option value="Folcklore">Folcklore</option>
               <option value="Jazz">Jazz</option>
-              <option value="Romantico">Romantico</option>
-              <option value="Lentos">Lentos</option>
+              <option value="Trap">Trap / Urbano</option>
+              <option value="Clasica">Clasica</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               {errors.categoria?.message}
@@ -166,10 +177,17 @@ const FormularioAdmin = () => {
             <Form.Label>Álbum</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Appetite for Destruction"
+              placeholder="Ingrese nombre del album"
               {...register("album", {
                 required: "El álbum es obligatorio",
-                minLength: { value: 2, message: "Debe tener al menos 2 caracteres" },
+                minLength: {
+                  value: 2,
+                  message: "Debe tener al menos 2 caracteres",
+                },
+                 maxLength: {
+                  value:20,
+                  message: "Debe tener maximo 20 caracteres"
+                }
               })}
               isInvalid={!!errors.album}
             />
@@ -182,11 +200,14 @@ const FormularioAdmin = () => {
             <Form.Label>Año</Form.Label>
             <Form.Control
               type="number"
-              placeholder="1987"
+              placeholder="Ingrese año de lanzamiento"
               {...register("anio", {
                 required: "El año es obligatorio",
                 min: { value: 1900, message: "Debe ser mayor a 1900" },
-                max: { value: new Date().getFullYear(), message: "No puede ser futuro" },
+                max: {
+                  value: new Date().getFullYear(),
+                  message: "No puede ser futuro",
+                },
               })}
               isInvalid={!!errors.anio}
             />
@@ -199,16 +220,16 @@ const FormularioAdmin = () => {
             <Form.Label>Imagen URL*</Form.Label>
             <Form.Control
               type="text"
-              placeholder="https://ejemplo.com/imagen.jpg"
+              placeholder="Ingrese URL de la Imagen Ej: https://ejemplo.com/imagen.jpg"
               {...register("imagen")}
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Duración</Form.Label>
+            <Form.Label>Duración (mm:ss)</Form.Label>
             <Form.Control
               type="text"
-              placeholder="02:22"
+              placeholder="Ingrese duracion de la cancion"
               {...register("duracion", {
                 required: "La duración es obligatoria",
                 pattern: { value: /^\d{2}:\d{2}$/, message: "Formato mm:ss" },
