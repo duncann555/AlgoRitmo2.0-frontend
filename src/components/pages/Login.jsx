@@ -9,7 +9,6 @@ import "../../styles/login.css";
 const BASE_USERS = import.meta.env.VITE_API_USUARIOS;
 
 const LoginPage = ({ setUsuarioLogueado }) => {
-  console.log("ENV:", import.meta.env);
 
   const [show, setShow] = useState(true);
   const [modo, setModo] = useState("login");
@@ -36,61 +35,55 @@ const LoginPage = ({ setUsuarioLogueado }) => {
   };
 
   const manejarLogin = async (data) => {
-  // 🔥 LEER VARIABLES DEL .ENV DEL FRONT
-  const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
-  const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
+    const adminEmailEnv = import.meta.env.VITE_API_EMAIL;
+    const adminPassEnv = import.meta.env.VITE_API_PASSWORD;
 
-  // 🔥 VALIDAR ADMIN LOCAL
-  if (data.email === adminEmailEnv && data.password === adminPassEnv) {
+    // ADMIN LOCAL
+    if (data.email === adminEmailEnv && data.password === adminPassEnv) {
+      const userAdmin = {
+        id: "admin_panel",
+        nombre: "Administrador",
+        email: data.email,
+        rol: "admin",
+        admin: true,
+      };
 
-    // 🔥 GUARDAR TOKEN FALSO PARA PASAR VALIDACIONES DEL BACK
-    const fakeToken = "token_admin_panel";
-    localStorage.setItem("token", fakeToken);
+      sessionStorage.setItem("usuarioKey", JSON.stringify(userAdmin));
+      setUsuarioLogueado(userAdmin);
 
-    // 🔥 GUARDAR USUARIO ADMIN COMPLETO
-    setUsuarioLogueado({
-      id: "admin_panel",
-      nombre: "Administrador",
-      email: data.email,
-      rol: "admin",
-      admin: true,   // 🔥 ESTO ES LO QUE HABILITA EL PANEL
+      Swal.fire("Admin OK", "Bienvenido al panel", "success");
+      navigate("/admin");
+      return;
+    }
+
+    // LOGIN NORMAL (SIN TOKEN)
+    const r = await fetch(`${BASE_USERS}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: data.email, password: data.password }),
     });
 
-    Swal.fire("Admin OK", "Bienvenido al panel", "success");
-    navigate("/admin");
-    return;
-  }
+    const res = await r.json();
 
-  // 🔥 LOGIN NORMAL CONTRA EL BACKEND
-  const r = await fetch(`${BASE_USERS}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: data.email, password: data.password }),
-  });
+    if (!r.ok) {
+      Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
+      return;
+    }
 
-  const res = await r.json();
+    const usuario = {
+      id: res.uid || res.id,
+      nombre: res.nombre,
+      email: res.email,
+      rol: res.rol,
+      admin: res.rol === "admin",
+    };
 
-  if (!r.ok) {
-    Swal.fire("Error", res.mensaje || "Credenciales incorrectas", "error");
-    return;
-  }
+    sessionStorage.setItem("usuarioKey", JSON.stringify(usuario));
+    setUsuarioLogueado(usuario);
 
-  // 🔥 GUARDAR USUARIO NORMAL
-  setUsuarioLogueado({
-    id: res.uid,
-    nombre: res.nombre,
-    email: res.email,
-    rol: res.rol,
-    admin: res.rol === "admin",   // 🔥 Esto era lo que te faltaba
-  });
-
-  if (res.token) localStorage.setItem("token", res.token);
-
-  Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
-  navigate("/");
-};
-
-
+    Swal.fire("Login OK", `Hola ${res.nombre}`, "success");
+    navigate("/");
+  };
 
   const manejarRegistro = async (data) => {
     try {
@@ -115,6 +108,7 @@ const LoginPage = ({ setUsuarioLogueado }) => {
       Swal.fire("Cuenta creada", "Ya podés iniciar sesión", "success");
       setModo("login");
       reset({ email: data.email, password: "" });
+
     } catch (e) {
       Swal.fire("Error", "Ocurrió un error en el registro", "error");
     }
@@ -136,12 +130,12 @@ const LoginPage = ({ setUsuarioLogueado }) => {
 
       <Modal.Body className="login-body">
         <Form onSubmit={handleSubmit(onSubmit)} className="form-container">
+
           {modo === "registro" && (
             <Form.Group className="mb-3">
               <Form.Label>Nombre</Form.Label>
               <Form.Control
                 type="text"
-                // 👇 VALIDACIONES DE NOMBRE AGREGADAS
                 {...register("nombre", {
                   required: "El nombre es obligatorio",
                   minLength: { value: 3, message: "Mínimo 3 caracteres" },
@@ -158,7 +152,6 @@ const LoginPage = ({ setUsuarioLogueado }) => {
             <Form.Label>Correo electrónico</Form.Label>
             <Form.Control
               type="email"
-              // 👇 VALIDACIÓN DE REGEX DE EMAIL AGREGADA
               {...register("email", {
                 required: "El correo es obligatorio",
                 pattern: {
@@ -176,7 +169,6 @@ const LoginPage = ({ setUsuarioLogueado }) => {
             <Form.Label>Contraseña</Form.Label>
             <Form.Control
               type="password"
-              // 👇 VALIDACIONES DE PASSWORD AGREGADAS
               {...register("password", {
                 required: "La contraseña es obligatoria",
                 minLength: { value: 6, message: "Mínimo 6 caracteres" },
